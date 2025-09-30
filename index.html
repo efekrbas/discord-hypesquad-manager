@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord HypeSquad Badge Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Discord HypeSquad Badge Manager</h1>
+            <p>Easily manage your Discord HypeSquad badges</p>
+        </div>
+
+        <div class="main-content">
+            <div class="token-section">
+                <label for="token">Discord Token:</label>
+                <input type="password" id="token" placeholder="Enter your Discord token here...">
+                <button id="toggleToken" class="toggle-btn">👁️</button>
+            </div>
+
+            <div class="badge-selection">
+                <h3>Select HypeSquad Badge:</h3>
+                <div class="badge-options">
+                    <div class="badge-option" data-house="1">
+                        <div class="badge-icon bravery">⚡</div>
+                        <span>Bravery (Green)</span>
+                    </div>
+                    <div class="badge-option" data-house="2">
+                        <div class="badge-icon brilliance">💎</div>
+                        <span>Brilliance (Purple)</span>
+                    </div>
+                    <div class="badge-option" data-house="3">
+                        <div class="badge-icon balance">⚖️</div>
+                        <span>Balance (Red)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="setBadge" class="action-btn set-btn" disabled>Add Badge</button>
+                <button id="removeBadge" class="action-btn remove-btn">Remove Badge</button>
+            </div>
+
+            <div class="status-section">
+                <div id="status" class="status-message"></div>
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <span>Processing...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>⚠️ <strong>Warning:</strong> Never share your Discord token with anyone!</p>
+            <p>This tool is for educational purposes only. You are responsible for how you use it.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
