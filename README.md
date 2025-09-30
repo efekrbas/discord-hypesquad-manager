@@ -1,17 +1,17 @@
-# Discord HypeSquad Badge Manager
+# 🚀 Discord HypeSquad Badge Manager
 
 A modern web application that lets you easily manage your Discord HypeSquad badges.
 
-## Features
+## ✨ Features
 
-- **Easy to Use**: Simple and intuitive interface
-- **All HypeSquad Badges**: Bravery (Green), Brilliance (Purple), Balance (Red)
-- **Secure**: Your token is stored only in your browser
-- **Responsive**: Works on mobile and desktop
-- **Fast**: Instant badge switching
-- **Modern Design**: Visual style aligned with Discord theme
+- 🎯 **Easy to Use**: Simple and intuitive interface
+- 🏆 **All HypeSquad Badges**: Bravery (Green), Brilliance (Purple), Balance (Red)
+- 🔒 **Secure**: Your token is stored only in your browser
+- 📱 **Responsive**: Works on mobile and desktop
+- ⚡ **Fast**: Instant badge switching
+- 🎨 **Modern Design**: Visual style aligned with Discord theme
 
-## Usage
+## 🚀 Usage
 
 1. **Getting Your Token**:
    - Open Discord
@@ -26,36 +26,38 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
    - Select the HypeSquad badge you want
    - Click the "Add Badge" button
 
-## HypeSquad houses
+## 🏠 HypeSquad Houses
 
 | House | Color | Emoji | Description |
 |---|---|---|---|
-| **Bravery** | Green | | Courage and risk-taking |
-| **Brilliance** | Purple | | Creativity and innovation |
-| **Balance** | Red | | Harmony and balance |
+| **Bravery** | 🟢 Green | ⚡ | Courage and risk-taking |
+| **Brilliance** | 🟣 Purple | 💎 | Creativity and innovation |
+| **Balance** | 🔴 Red | ⚖️ | Harmony and balance |
 
-## File Structure
+## 📁 File Structure
 
+```
 discord-hypesquad-manager/
-index.html          # Main HTML file
-script.js           # JavaScript logic
-style.css           # CSS styles
-README.md           # This file
+├── index.html          # Main HTML file
+├── script.js           # JavaScript logic
+├── style.css           # CSS styles
+└── README.md           # This file
+```
 
-## Important Notices
+## ⚠️ Important Notices
 
 - **Token Security**: Never share your Discord token!
 - **For Educational Purposes**: This tool is for educational use only
 - **Responsibility**: You are responsible for how you use this tool
 - **Discord ToS**: Use in accordance with Discord’s Terms of Service
 
-## Technical Details
+## 🔧 Technical Details
 
 - **API Endpoint**: `https://discord.com/api/v9/hypesquad/online`
 - **Method**: POST (add badge), DELETE (remove badge)
 - **Requirements**: Modern web browser, internet connection
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Errors:
 
@@ -69,13 +71,13 @@ README.md           # This file
 - Wait a few minutes and try again
 - If using a VPN, try disabling it
 
-## Changelog
+## 📝 Changelog
 
 - **v1.0**: Initial release
   - Basic badge management
   - Modern UI
   - Token storage
 
-## Contributing
+## 🤝 Contributing
 
 This project is not open source, but you can share your suggestions.
