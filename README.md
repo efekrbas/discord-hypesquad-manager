@@ -34,7 +34,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 | **Brilliance** | 🟣 Purple | 💎 | Creativity and innovation |
 | **Balance** | 🔴 Red | ⚖️ | Harmony and balance |
 
-## 📁 File Structuree
+## 📁 File Structure
 
 ```
 discord-hypesquad-manager/
@@ -76,7 +76,3 @@ discord-hypesquad-manager/
   - Basic badge management
   - Modern UI
   - Token storage
-
-## 🤝 Contributing
-
-This project is not open source, but you can share your suggestions.
