@@ -76,4 +76,4 @@ discord-hypesquad-manager/
   - Basic badge management
   - Modern UI
   - Token storage
-x
+xxxxxx
