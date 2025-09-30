@@ -56,7 +56,7 @@ discord-hypesquad-manager/
 - **Method**: POST (add badge), DELETE (remove badge)
 - **Requirements**: Modern web browser, internet connection
 
-## 🐛 Troubleshooting
+## 🐛 Troubleshootingg
 
 ### Common Errors:
 
