@@ -47,7 +47,6 @@ discord-hypesquad-manager/
 ## ⚠️ Important Notices
 
 - **Token Security**: Never share your Discord token!
-- **For Educational Purposes**: This tool is for educational use only
 - **Responsibility**: You are responsible for how you use this tool
 - **Discord ToS**: Use in accordance with Discord’s Terms of Service
 
