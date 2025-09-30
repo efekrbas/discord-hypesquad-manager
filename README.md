@@ -64,7 +64,7 @@ discord-hypesquad-manager/
 2. **429 Too Many Requests**: Too many requests; wait a bit
 3. **Network Error**: Check your internet connection
 
-### Solutions:
+### Solutions::
 
 - Obtain your token again
 - Wait a few minutes and try again
