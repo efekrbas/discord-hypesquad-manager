@@ -162,9 +162,9 @@ class DiscordHypeSquadManager {
 
     getHouseName(houseId) {
         const houses = {
-            1: 'Bravery (Green)',
-            2: 'Brilliance (Purple)',
-            3: 'Balance (Red)'
+            1: 'Balance (Green)',
+            2: 'Bravery (Purple)',
+            3: 'Brilliance (Red)'
         };
         return houses[houseId] || 'Unknown';
     }
