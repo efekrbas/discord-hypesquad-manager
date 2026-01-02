@@ -28,11 +28,11 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 
 ## 🏠 HypeSquad Houses
 
-| House | Badge | Emoji | Description |
-|:---:|:---:|:---:|---|
-| **Bravery** | <img width="15" height="15" alt="image" src="https://github.com/user-attachments/assets/7d255782-118a-4982-8157-af6ecc7946ab" /> | 🟣 | Courage and risk-taking |
-| **Brilliance** | <img width="15" height="15" alt="image" src="https://github.com/user-attachments/assets/ea610501-fd3b-4445-a296-e7abda4fb90d" /> | 🔴 | Creativity and innovation |
-| **Balance** | <img width="15" height="15" alt="image" src="https://github.com/user-attachments/assets/147040d9-3e05-4493-86ec-24376e9b4f60" /> | 🟢 | Harmony and balance |
+| House | Badge | Description |
+|:---:|:---:|---|
+| **Bravery** | <img src="images/bravery.png" width="48" height="48" alt="Bravery"> | Courage and risk-taking |
+| **Brilliance** | <img src="images/brilliance.png" width="48" height="48" alt="Brilliance"> | Creativity and innovation |
+| **Balance** | <img src="images/balance.png" width="48" height="48" alt="Balance"> | Harmony and balance |
 
 ## 📁 File Structure
 

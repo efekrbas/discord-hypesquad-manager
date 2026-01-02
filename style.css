@@ -146,9 +146,22 @@ body {
 }
 
 .badge-icon {
-    font-size: 24px;
+    /* font-size: 24px; Removed font-size as we are using images */
     margin-bottom: 8px;
-    display: block;
+    display: flex; /* Changed to flex for better centering if needed */
+    justify-content: center;
+    align-items: center;
+}
+
+.badge-icon img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.badge-option:hover .badge-icon img {
+    transform: scale(1.1);
 }
 
 .badge-option span {
