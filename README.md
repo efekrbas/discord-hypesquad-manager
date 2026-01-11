@@ -26,7 +26,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
    - Select the HypeSquad badge you want
    - Click the "Add Badge" button
 
-## 🏠 HypeSquad Houses
+## HypeSquad Houses
 
 | House | Badge | Description |
 |:---:|:---:|---|
