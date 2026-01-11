@@ -21,7 +21,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
    - Find your token under the `Authorization` header
 
 2. **Using the App**:
-   - Open the `index.html` file in your browser
+   - Open the [discord-hypesquad-manager](https://efekrbas.github.io/discord-hypesquad-manager/)
    - Enter your Discord token
    - Select the HypeSquad badge you want
    - Click the "Add Badge" button
