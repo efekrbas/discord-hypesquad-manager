@@ -5,7 +5,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 ## ✨ Features
 
 - 🎯 **Easy to Use**: Simple and intuitive interface
-- 🏆 **All HypeSquad Badges**: Bravery (Green), Brilliance (Purple), Balance (Red)
+- 🏆 **All HypeSquad Badges**: Bravery (Purple), Brilliance (Red), Balance (Green)
 - 🔒 **Secure**: Your token is stored only in your browser
 - 📱 **Responsive**: Works on mobile and desktop
 - ⚡ **Fast**: Instant badge switching
