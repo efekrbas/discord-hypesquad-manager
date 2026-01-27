@@ -1,4 +1,4 @@
-# 🚀 Discord HypeSquad Badge Manager
+# Discord HypeSquad Badge Manager
 
 A modern web application that lets you easily manage your Discord HypeSquad badges.
 
@@ -11,7 +11,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 - ⚡ **Fast**: Instant badge switching
 - 🎨 **Modern Design**: Visual style aligned with Discord theme
 
-## 🚀 Usage
+## Usage
 
 1. **Getting Your Token**:
    - Open Discord
