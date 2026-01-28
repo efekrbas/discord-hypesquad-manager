@@ -14,7 +14,7 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 ## Usage
 
 1. **Getting Your Token**:
-   - https://youtu.be/rcwWex7aqTo
+   - [https://youtu.be/rcwWex7aqTo](If you don't know how it was taken, watch this.)
 
 2. **Using the App**:
    - Open the [discord-hypesquad-manager](https://efekrbas.github.io/discord-hypesquad-manager/)
