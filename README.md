@@ -26,9 +26,9 @@ A modern web application that lets you easily manage your Discord HypeSquad badg
 
 | House | Badge | Description |
 |:---:|:---:|---|
-| **Bravery** | <img src="images/bravery.png" width="48" height="48" alt="Bravery"> | Courage and risk-taking |
-| **Brilliance** | <img src="images/brilliance.png" width="48" height="48" alt="Brilliance"> | Creativity and innovation |
-| **Balance** | <img src="images/balance.png" width="48" height="48" alt="Balance"> | Harmony and balance |
+| **Bravery** | <img src="images/hypesquadbravery.svg" width="48" height="48" alt="Bravery"> | Courage and risk-taking |
+| **Brilliance** | <img src="images/hypesquadbrilliance.svg" width="48" height="48" alt="Brilliance"> | Creativity and innovation |
+| **Balance** | <img src="images/hypesquadbalance.svg" width="48" height="48" alt="Balance"> | Harmony and balance |
 
 ## 📁 File Structure
 
