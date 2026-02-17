@@ -113,6 +113,10 @@ body {
     justify-content: center;
     border-radius: 5px;
     transition: background 0.2s ease;
+    margin: 0;
+    /* Ensure no margins affect centering */
+    line-height: normal;
+    /* Reset line-height */
 }
 
 .toggle-btn:hover {
@@ -386,4 +390,125 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Discord Login Button */
+.discord-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #5865F2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+    margin-bottom: 15px;
+}
+
+.discord-btn:hover {
+    background-color: #4752C4;
+}
+
+.discord-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
+    color: #b9bbbe;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #4f545c;
+}
+
+.divider span {
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Profile Section */
+.profile-section {
+    margin-bottom: 30px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.profile-card {
+    background: #f8f9fa;
+    border: 2px solid #5865f2;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #5865f2;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.profile-info h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Ensures content starts from left */
+    gap: 4px;
+    /* Reduced space between name and badge */
+}
+
+.current-badge-icon {
+    width: 22px;
+    /* Adjusted to visually match the text size better */
+    height: 22px;
+    object-fit: contain;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    padding: 5px;
+    transition: opacity 0.2s;
+}
+
+.logout-btn:hover {
+    opacity: 1;
+}
+
+.hidden {
+    display: none !important;
 }
