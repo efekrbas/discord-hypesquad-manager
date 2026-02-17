@@ -158,6 +158,12 @@ class DiscordHypeSquadManager {
 
         this.updateSetButtonState();
         this.showStatus('Logged out.', 'info');
+
+        // Clear token input
+        const tokenInput = document.getElementById('token');
+        if (tokenInput) {
+            tokenInput.value = '';
+        }
     }
 
     // Load saved token if any
