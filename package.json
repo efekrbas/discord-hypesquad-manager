@@ -1,0 +1,43 @@
+{
+  "name": "discord-hypesquad-manager",
+  "version": "1.0.0",
+  "description": "A modern web application that lets you easily manage your Discord HypeSquad badges.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/efekrbas/discord-hypesquad-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.efekrbas.discordhypesquadmanager",
+    "productName": "Discord HypeSquad Manager",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "images/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Discord HypeSquad Manager"
+    }
+  },
+  "devDependencies": {
+    "electron": "^40.4.1",
+    "electron-builder": "^24.13.3"
+  }
+}

@@ -18,11 +18,26 @@
         </div>
 
         <div class="main-content">
-            <div class="token-section">
+            <!-- Login Section -->
+            <div id="loginSection" class="token-section">
                 <label for="token">Discord Token:</label>
                 <div class="input-wrapper">
-                    <input type="password" id="token" placeholder="Enter your Discord token here...">
-                    <button id="toggleToken" class="toggle-btn">👁️</button>
+                    <input type="password" id="token" placeholder="Enter your Discord token here..." autocomplete="off">
+                    <button id="toggleToken" class="toggle-btn" title="Show/Hide Token">👁️</button>
+                </div>
+            </div>
+
+            <!-- Profile Section (Hidden by default) -->
+            <div id="profileSection" class="profile-section hidden">
+                <div class="profile-card">
+                    <img id="userAvatar" src="" alt="Avatar" class="profile-avatar">
+                    <div class="profile-info">
+                        <span class="profile-label">Connected as:</span>
+                        <h3 id="username">User</h3>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn" title="Logout">
+                        ❌
+                    </button>
                 </div>
             </div>
 
