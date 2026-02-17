@@ -1,13 +1,14 @@
-# Discord HypeSquad Badge Manager (Desktop App)
+# Discord HypeSquad Badge Manager
 
-A modern, secure desktop application that lets you easily manage your Discord HypeSquad badges without complex manual requests.
+A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
 
 ![App Screenshot](https://via.placeholder.com/800x400?text=App+Screenshot+Placeholder)
 
 ## ✨ Features
 
+- 🌐 **Web Version**: Use directly in your browser without downloading anything.
 - 🖥️ **Desktop Application**: Runs securely on your PC (Windows).
-- 🔒 **Secure Login**: Logs in directly via Discord's official login page. Your token is stored locally on your device.
+- 🔒 **Secure Login**: Logs in directly via Discord's official login page (Desktop) or Token (Web).
 - 👤 **Profile View**: Displays your current Avatar, Username, and HypeSquad Badge.
 - ⚡ **Instant Switching**: Switch between Bravery, Brilliance, and Balance instantly.
 - 🛡️ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
