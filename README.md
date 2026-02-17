@@ -13,6 +13,14 @@ A modern, secure desktop application that lets you easily manage your Discord Hy
 - 🛡️ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
 - 🎨 **Modern Design**: Sleek interface inspired by Discord's own UI.
 
+## 🏠 HypeSquad Houses
+
+| House | Badge | Description |
+|:---:|:---:|---|
+| **Bravery** | <img src="images/hypesquadbravery.svg" width="48" height="48" alt="Bravery"> | Courage and risk-taking |
+| **Brilliance** | <img src="images/hypesquadbrilliance.svg" width="48" height="48" alt="Brilliance"> | Creativity and innovation |
+| **Balance** | <img src="images/hypesquadbalance.svg" width="48" height="48" alt="Balance"> | Harmony and balance |
+
 ## � How to Use
 
 You can use this application in two ways: **Web Browser** or **Desktop App**.
