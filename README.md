@@ -40,7 +40,7 @@ You can use this application in two ways: **Web Browser** or **Desktop App**.
 
 ### Method 1: Web Browser (No Download Required)
 1.  Open the [discord-hypesquad-manager](https://efekrbas.github.io/discord-hypesquad-manager/)
-2.  Enter your **Discord Token** in the input field. ([**Watch this video**](https://youtu.be/rcwWex7aqTo) if you don't know how to get)
+2.  Enter your **Discord Token** in the input field. ([**Watch this video**](https://youtu.be/rcwWex7aqTo) if you don't know how to get token)
 3. Select the **HypeSquad Badge** you want (Bravery, Brilliance, or Balance).
 4. Click the **"Add Badge"** button.
 
