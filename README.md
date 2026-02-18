@@ -3,7 +3,7 @@
 A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
 
 ### App Screenshots
-
+<br>
 
 <div align="center">
   <img
