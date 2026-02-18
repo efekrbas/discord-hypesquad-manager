@@ -2,7 +2,18 @@
 
 A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
 
-![App Screenshot](https://via.placeholder.com/800x400?text=App+Screenshot+Placeholder)
+![App Screenshots]
+
+<div align="center">
+  <img
+    src="https://github.com/user-attachments/assets/936ec632-a606-4d60-abe3-db6d5130d39c"
+    width="48%"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/3f2d9fda-0a80-4490-905a-0d621121b26d"
+    width="48%"
+  />
+</div>
 
 ## ✨ Features
 
@@ -46,5 +57,5 @@ If you prefer a standalone app:
 
 ## 📄 License
 
-ISC
+MIT
 
