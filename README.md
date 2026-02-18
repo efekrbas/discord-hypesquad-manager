@@ -4,6 +4,7 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 ![App Screenshots]
 
+
 <div align="center">
   <img
     src="https://github.com/user-attachments/assets/936ec632-a606-4d60-abe3-db6d5130d39c"
