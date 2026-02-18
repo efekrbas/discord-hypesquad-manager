@@ -52,7 +52,6 @@ If you prefer a standalone app:
 
 ## ⚠️ Disclaimer
 
-- This tool is for educational purposes.
 - **Never share your token** with anyone.
 - Use this tool responsibly and in accordance with Discord's Terms of Service.
 
