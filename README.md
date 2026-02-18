@@ -45,7 +45,7 @@ You can use this application in two ways: **Web Browser** or **Desktop App**.
 3. Select the **HypeSquad Badge** you want (Bravery, Brilliance, or Balance).
 4. Click the **"Add Badge"** button.
 
-### Method 2: Desktop Application (Windows) - (Recommended)
+### Method 2: Desktop Application (Windows)
 If you prefer a standalone app:
 1.  Go to the **[Releases](../../releases)** page of this repository.
 2.  Download the latest `Discord.HypeSquad.Manager.Setup.v1.0.0.exe` (or latest version).
