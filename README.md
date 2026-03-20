@@ -6,7 +6,7 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 <div align="center">
   <img
-    src="https://github.com/user-attachments/assets/936ec632-a606-4d60-abe3-db6d5130d39c"
+    src="https://github.com/user-attachments/assets/727fc7e0-7e39-427f-889e-01e0b713e2e3"
     width="48%"
   />
   <img
@@ -14,6 +14,7 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
     width="48%"
   />
 </div>
+
 
 ## ✨ Features
 
