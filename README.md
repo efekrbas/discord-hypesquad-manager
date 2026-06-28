@@ -6,11 +6,8 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 
 <div align="center">
- <img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/5d88801a-3079-477d-b284-b77df0bd6685" />
-  <img
-    src="https://github.com/user-attachments/assets/3f2d9fda-0a80-4490-905a-0d621121b26d"
-    width="48%"
-  />
+  <img src="https://github.com/user-attachments/assets/5d88801a-3079-477d-b284-b77df0bd6685" width="49%" alt="image" />
+  <img src="https://github.com/user-attachments/assets/3f2d9fda-0a80-4490-905a-0d621121b26d" width="49%" />
 </div>
 
 
