@@ -15,12 +15,12 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 ## ✨ Features
 
 - 🌐 **Web Version**: Use directly in your browser without downloading anything.
-- 🖥️ **Desktop Application**: Runs securely on your PC (Windows).
-- 🔒 **Secure Login**: Logs in directly via Discord's official login page (Desktop) or Token (Web).
+- 🖥️ **Desktop Application**: Runs securely on your PC (Windows) with a dedicated Setup Installer or a Portable EXE.
+- 🔒 **One-Click Secure Login**: Log in seamlessly via Discord's official login page in the Desktop App without ever handling tokens!
 - 👤 **Profile View**: Displays your current Avatar, Username, and HypeSquad Badge.
 - ⚡ **Instant Switching**: Switch between Bravery, Brilliance, and Balance instantly.
 - 🛡️ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
-- 🎨 **Modern Design**: Sleek interface inspired by Discord's own UI.
+- 🎨 **Premium UI**: Beautiful, fully responsive glassmorphism design with smooth GSAP animations.
 
 ## HypeSquad Houses
 
@@ -40,10 +40,14 @@ You can use this application in two ways: **Web Browser** or **Desktop App**.
 3. Select the **HypeSquad Badge** you want (Bravery, Brilliance, or Balance).
 4. Click the **"Add Badge"** button.
 
-### Method 2: Desktop Application (Windows)
-1.  Go to the **[Releases](../../releases)** page of this repository.
-2.  Download the latest version
-3.  Double-click the file to install and launch the application.
+### Method 2: Desktop Application (Windows) - *Recommended*
+With the Desktop app, you don't need to manually find your token! You can simply click **"Login with Discord"**.
+
+1. Go to the **[Releases](../../releases)** page of this repository.
+2. Choose your preferred download:
+   - **`Discord HypeSquad Manager Setup 1.0.0.exe`**: Installs the app on your PC and adds a Desktop/Start Menu shortcut.
+   - **`Discord HypeSquad Manager 1.0.0.exe`** (Portable): No installation required, just double-click and use!
+3. Launch the application and click **Login with Discord**.
 
 ## ⚠️ Disclaimer
 
