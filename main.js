@@ -18,6 +18,15 @@ function createWindow() {
 
     mainWindow.loadFile('index.html');
     // mainWindow.webContents.openDevTools(); // Optional: specifically for debugging
+
+    // Open external links in default browser
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith('http')) {
+            require('electron').shell.openExternal(url);
+            return { action: 'deny' };
+        }
+        return { action: 'allow' };
+    });
 }
 
 app.whenReady().then(() => {
