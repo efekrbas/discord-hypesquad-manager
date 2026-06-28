@@ -76,8 +76,41 @@ class DiscordHypeSquadManager {
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
 
+        const electronLoginContainer = document.getElementById('electronLoginContainer');
+        const webTokenContainer = document.getElementById('webTokenContainer');
+        const electronLoginBtn = document.getElementById('electronLoginBtn');
+
         if (window.electronAPI) {
-            console.log('Electron API handled via invoke/promise pattern');
+            console.log('Electron API detected. Enabling Discord Login.');
+            if (electronLoginContainer) electronLoginContainer.classList.remove('hidden');
+            if (webTokenContainer) webTokenContainer.classList.add('hidden');
+            
+            if (electronLoginBtn) {
+                electronLoginBtn.addEventListener('click', this.loginWithElectron.bind(this));
+            }
+        } else {
+            if (electronLoginContainer) electronLoginContainer.classList.add('hidden');
+            if (webTokenContainer) webTokenContainer.classList.remove('hidden');
+        }
+    }
+
+    async loginWithElectron() {
+        this.showLoading(true);
+        try {
+            const token = await window.electronAPI.loginWithDiscord();
+            if (token) {
+                this.token = this.sanitizeToken(token);
+                localStorage.setItem('discord_token', this.token);
+                this.updateSetButtonState();
+                await this.fetchUserProfile();
+            } else {
+                this.showStatus('❌ Login cancelled or failed.', 'error');
+            }
+        } catch (error) {
+            console.error('Electron login error:', error);
+            this.showStatus('❌ An error occurred during login.', 'error');
+        } finally {
+            this.showLoading(false);
         }
     }
 
