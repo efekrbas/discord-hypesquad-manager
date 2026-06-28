@@ -9,6 +9,47 @@ class DiscordHypeSquadManager {
         this.bindEvents();
         this.checkSavedSession();
         this.loadSavedToken();
+        this.playIntroAnimation();
+    }
+
+    playIntroAnimation() {
+        // Initial page load animation using GSAP
+        if (typeof gsap !== 'undefined') {
+            const tl = gsap.timeline();
+            tl.fromTo('.glass-panel', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", clearProps: "transform" })
+              .fromTo('.gs-reveal', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.15, ease: "power2.out", clearProps: "transform" }, "-=0.4");
+            
+            // Add 3D tilt effect on cards based on mouse move
+            document.querySelectorAll('.badge-option').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    gsap.to(card, {
+                        rotateX: rotateX,
+                        rotateY: rotateY,
+                        duration: 0.3,
+                        ease: "power1.out"
+                    });
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        rotateX: 0,
+                        rotateY: 0,
+                        duration: 0.5,
+                        ease: "elastic.out(1, 0.5)"
+                    });
+                });
+            });
+        }
     }
 
     bindEvents() {
@@ -35,11 +76,8 @@ class DiscordHypeSquadManager {
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));
 
-        // Check if Electron API is available
         if (window.electronAPI) {
             console.log('Electron API handled via invoke/promise pattern');
-        } else {
-            console.warn('Electron API not found. Auto-login will not work.');
         }
     }
 
@@ -48,29 +86,6 @@ class DiscordHypeSquadManager {
         if (savedToken) {
             this.token = this.sanitizeToken(savedToken);
             this.fetchUserProfile();
-        }
-    }
-
-    async loginWithDiscord() {
-        if (!window.electronAPI) return;
-
-        this.showLoading(true);
-        try {
-            const token = await window.electronAPI.loginWithDiscord();
-            if (token) {
-                const sanitized = this.sanitizeToken(token);
-                this.token = sanitized;
-                localStorage.setItem('discord_token', sanitized);
-                await this.fetchUserProfile();
-                this.showStatus('✅ Logged in successfully!', 'success');
-            } else {
-                this.showStatus('❌ Login cancelled or failed.', 'error');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            this.showStatus('❌ Login error occurred.', 'error');
-        } finally {
-            this.showLoading(false);
         }
     }
 
@@ -89,33 +104,42 @@ class DiscordHypeSquadManager {
                 this.updateProfileUI(user);
                 this.updateSetButtonState();
             } else {
-                // If token is invalid, clear it
                 this.logout();
                 this.showStatus('❌ Session expired. Please login again.', 'error');
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
-            // Don't logout on network error, just show error
             this.showStatus('❌ Could not fetch profile.', 'error');
         }
     }
 
     updateProfileUI(user) {
-        // Hide login, show profile
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('profileSection').classList.remove('hidden');
+        // Animate transition using GSAP if available
+        if (typeof gsap !== 'undefined') {
+            gsap.to('#loginSection', {
+                opacity: 0, height: 0, duration: 0.4, ease: "power2.inOut", onComplete: () => {
+                    document.getElementById('loginSection').classList.add('hidden');
+                    
+                    const profileSection = document.getElementById('profileSection');
+                    profileSection.classList.remove('hidden');
+                    gsap.fromTo(profileSection, 
+                        { opacity: 0, y: 20 }, 
+                        { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.5)" }
+                    );
+                }
+            });
+        } else {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('profileSection').classList.remove('hidden');
+        }
 
-        // Update profile info
         const usernameEl = document.getElementById('username');
-        usernameEl.innerHTML = ''; // Clear previous content
+        usernameEl.innerHTML = ''; 
 
-        // Create name span
         const nameSpan = document.createElement('span');
         nameSpan.textContent = user.username;
         usernameEl.appendChild(nameSpan);
 
-        // Check for HypeSquad Badge
-        // Flags: Bravery=64, Brilliance=128, Balance=256
         const flags = user.flags || user.public_flags || 0;
         let badgeIcon = null;
 
@@ -147,11 +171,24 @@ class DiscordHypeSquadManager {
             await window.electronAPI.logout();
         }
 
-        // Reset UI
-        document.getElementById('loginSection').classList.remove('hidden');
-        document.getElementById('profileSection').classList.add('hidden');
+        if (typeof gsap !== 'undefined') {
+            gsap.to('#profileSection', {
+                opacity: 0, height: 0, duration: 0.4, ease: "power2.inOut", onComplete: () => {
+                    document.getElementById('profileSection').classList.add('hidden');
+                    
+                    const loginSection = document.getElementById('loginSection');
+                    loginSection.classList.remove('hidden');
+                    gsap.fromTo(loginSection, 
+                        { opacity: 0, height: 0 }, 
+                        { opacity: 1, height: 'auto', duration: 0.4, ease: "power2.out" }
+                    );
+                }
+            });
+        } else {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('profileSection').classList.add('hidden');
+        }
 
-        // Clear selection
         document.querySelectorAll('.badge-option').forEach(option => {
             option.classList.remove('selected');
         });
@@ -159,14 +196,12 @@ class DiscordHypeSquadManager {
         this.updateSetButtonState();
         this.showStatus('Logged out.', 'info');
 
-        // Clear token input
         const tokenInput = document.getElementById('token');
         if (tokenInput) {
             tokenInput.value = '';
         }
     }
 
-    // Load saved token if any
     loadSavedToken() {
         const savedToken = localStorage.getItem('discord_token');
         if (savedToken) {
@@ -180,13 +215,17 @@ class DiscordHypeSquadManager {
     toggleTokenVisibility() {
         const tokenInput = document.getElementById('token');
         const toggleBtn = document.getElementById('toggleToken');
+        
+        // Simple SVG swap
+        const eyeOpen = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const eyeClosed = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
 
         if (tokenInput.type === 'password') {
             tokenInput.type = 'text';
-            toggleBtn.textContent = '🙈';
+            toggleBtn.innerHTML = eyeClosed;
         } else {
             tokenInput.type = 'password';
-            toggleBtn.textContent = '👁️';
+            toggleBtn.innerHTML = eyeOpen;
         }
     }
 
@@ -197,15 +236,23 @@ class DiscordHypeSquadManager {
     }
 
     selectBadge(event) {
-        // Clear previous selection
-        document.querySelectorAll('.badge-option').forEach(option => {
+        // Animate deselect
+        document.querySelectorAll('.badge-option.selected').forEach(option => {
             option.classList.remove('selected');
         });
 
-        // Mark new selection
+        // Add selection
         const selectedOption = event.currentTarget;
         selectedOption.classList.add('selected');
         this.selectedHouse = parseInt(selectedOption.dataset.house);
+
+        // Add pop animation via GSAP
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo(selectedOption.querySelector('img'), 
+                { scale: 0.8 }, 
+                { scale: 1.1, duration: 0.4, ease: "back.out(2)" }
+            );
+        }
 
         this.updateSetButtonState();
     }
@@ -224,8 +271,6 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            // In some environments there may be an offset in Discord API house IDs.
-            // Map selection to ensure correct badge: 1->3, 2->1, 3->2
             const houseIdMap = { 1: 3, 2: 1, 3: 2 };
             const apiHouseId = houseIdMap[this.selectedHouse] || this.selectedHouse;
 
@@ -244,7 +289,6 @@ class DiscordHypeSquadManager {
             if (response.ok) {
                 const houseName = this.getHouseName(this.selectedHouse);
                 this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
-                // Refresh profile to show new badge
                 this.fetchUserProfile();
             } else if (response.status === 401) {
                 this.showStatus('❌ Invalid token! Please check your token.', 'error');
@@ -283,13 +327,11 @@ class DiscordHypeSquadManager {
 
             if (response.ok || response.status === 204) {
                 this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
-                // Clear selection
                 document.querySelectorAll('.badge-option').forEach(option => {
                     option.classList.remove('selected');
                 });
                 this.selectedHouse = null;
                 this.updateSetButtonState();
-                // Refresh profile to show no badge
                 this.fetchUserProfile();
             } else if (response.status === 401) {
                 this.showStatus('❌ Invalid token! Please check your token.', 'error');
@@ -321,12 +363,20 @@ class DiscordHypeSquadManager {
     showStatus(message, type) {
         const statusElement = document.getElementById('status');
         statusElement.textContent = message;
-        statusElement.className = `status-message ${type}`;
+        
+        // Use classList for smoother transitions
+        statusElement.className = `status-message ${type} show`;
 
-        // Clear message after 5 seconds
-        setTimeout(() => {
-            statusElement.textContent = '';
-            statusElement.className = 'status-message';
+        if (this.statusTimeout) clearTimeout(this.statusTimeout);
+        
+        this.statusTimeout = setTimeout(() => {
+            statusElement.classList.remove('show');
+            setTimeout(() => {
+                if(!statusElement.classList.contains('show')) {
+                    statusElement.textContent = '';
+                    statusElement.className = 'status-message';
+                }
+            }, 300); // Wait for fade out
         }, 5000);
     }
 
@@ -340,18 +390,15 @@ class DiscordHypeSquadManager {
         } else {
             loadingElement.classList.add('hidden');
             buttons.forEach(btn => btn.disabled = false);
-            this.updateSetButtonState(); // Refresh set button state
+            this.updateSetButtonState();
         }
     }
 
-    // Token format validation
     validateToken(token) {
-        // Discord token format: 24 chars.6 chars.27 chars (base64)
         const tokenRegex = /^[A-Za-z0-9+/]{24}\.[A-Za-z0-9+/]{6}\.[A-Za-z0-9+/\-_]{27}$/;
         return tokenRegex.test(token);
     }
 
-    // Accept tokens wrapped in quotes (single or double)
     sanitizeToken(raw) {
         if (!raw) return '';
         let token = String(raw).trim();
@@ -362,17 +409,18 @@ class DiscordHypeSquadManager {
     }
 }
 
-// Uygulama başlatma
 document.addEventListener('DOMContentLoaded', () => {
     new DiscordHypeSquadManager();
 
-    // Show info message when page loads
     setTimeout(() => {
         const statusElement = document.getElementById('status');
-        statusElement.textContent = '💡 Enter your Discord token and choose the badge you want.';
-        statusElement.className = 'status-message info';
-    }, 1000);
+        if(!statusElement.textContent) {
+            statusElement.textContent = '💡 Enter your Discord token to begin.';
+            statusElement.className = 'status-message info show';
+            
+            setTimeout(() => {
+                statusElement.classList.remove('show');
+            }, 6000);
+        }
+    }, 1500);
 });
-
-// Security warning
-

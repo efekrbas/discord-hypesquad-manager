@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord HypeSquad Badge Manager</title>
+    <title>Discord HypeSquad Manager</title>
+    <!-- Modern Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="./images/logo.png">
     <link rel="apple-touch-icon" href="./images/logo.png">
@@ -12,79 +16,101 @@
 </head>
 
 <body>
-    <div class="container">
+    <!-- Animated background glowing orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="container glass-panel">
         <div class="header">
-            <h1>Discord HypeSquad Badge Manager</h1>
-            <p>Easily manage your Discord HypeSquad badges</p>
+            <div class="header-logo-wrapper">
+                <img src="./images/logo.png" alt="Logo" class="header-logo">
+            </div>
+            <h1>HypeSquad Manager</h1>
+            <p class="subtitle">Easily manage your Discord HypeSquad badges</p>
         </div>
 
         <div class="main-content">
             <!-- Login Section -->
-            <div id="loginSection" class="token-section">
-                <label for="token">Discord Token:</label>
+            <div id="loginSection" class="token-section gs-reveal">
+                <label for="token">Discord Token</label>
                 <div class="input-wrapper">
-                    <input type="password" id="token" placeholder="Enter your Discord token here..." autocomplete="off">
-                    <button id="toggleToken" class="toggle-btn" title="Show/Hide Token">👁️</button>
+                    <input type="password" id="token" placeholder="Paste your Discord token..." autocomplete="off">
+                    <button id="toggleToken" class="toggle-btn" title="Show/Hide Token">
+                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+                <div class="security-note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>Your token is never stored externally.</span>
                 </div>
             </div>
 
             <!-- Profile Section (Hidden by default) -->
             <div id="profileSection" class="profile-section hidden">
-                <div class="profile-card">
-                    <img id="userAvatar" src="" alt="Avatar" class="profile-avatar">
+                <div class="profile-card glass-panel-inner">
+                    <div class="avatar-ring">
+                        <img id="userAvatar" src="" alt="Avatar" class="profile-avatar">
+                    </div>
                     <div class="profile-info">
-                        <span class="profile-label">Connected as:</span>
+                        <span class="profile-label">Authenticated as</span>
                         <h3 id="username">User</h3>
                     </div>
                     <button id="logoutBtn" class="logout-btn" title="Logout">
-                        ❌
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                     </button>
                 </div>
             </div>
 
-            <div class="badge-selection">
-                <h3>Select HypeSquad Badge:</h3>
+            <div class="badge-selection gs-reveal gs-delay-1">
+                <h3>Select House</h3>
                 <div class="badge-options">
-                    <div class="badge-option" data-house="2">
+                    <div class="badge-option bravery-card" data-house="2">
+                        <div class="card-glow"></div>
                         <div class="badge-icon">
                             <img src="images/hypesquadbravery.svg" alt="Bravery">
                         </div>
-                        <span>Bravery</span>
+                        <span class="badge-name">Bravery</span>
                     </div>
-                    <div class="badge-option" data-house="3">
+                    <div class="badge-option brilliance-card" data-house="3">
+                        <div class="card-glow"></div>
                         <div class="badge-icon">
                             <img src="images/hypesquadbrilliance.svg" alt="Brilliance">
                         </div>
-                        <span>Brilliance</span>
+                        <span class="badge-name">Brilliance</span>
                     </div>
-                    <div class="badge-option" data-house="1">
+                    <div class="badge-option balance-card" data-house="1">
+                        <div class="card-glow"></div>
                         <div class="badge-icon">
                             <img src="images/hypesquadbalance.svg" alt="Balance">
                         </div>
-                        <span>Balance</span>
+                        <span class="badge-name">Balance</span>
                     </div>
                 </div>
             </div>
 
-            <div class="action-buttons">
-                <button id="setBadge" class="action-btn set-btn" disabled>Add Badge</button>
-                <button id="removeBadge" class="action-btn remove-btn">Remove Badge</button>
+            <div class="action-buttons gs-reveal gs-delay-2">
+                <button id="setBadge" class="action-btn set-btn premium-btn" disabled>
+                    <span class="btn-text">Equip Badge</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button id="removeBadge" class="action-btn remove-btn premium-btn secondary">
+                    <span class="btn-text">Remove</span>
+                </button>
             </div>
 
             <div class="status-section">
                 <div id="status" class="status-message"></div>
                 <div id="loading" class="loading hidden">
                     <div class="spinner"></div>
-                    <span>Processing...</span>
+                    <span>Authenticating...</span>
                 </div>
             </div>
         </div>
-
-        <div class="footer">
-            <p>⚠️ <strong>Warning:</strong> Never share your Discord token with anyone!</p>
-        </div>
     </div>
 
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="script.js"></script>
 </body>
 
