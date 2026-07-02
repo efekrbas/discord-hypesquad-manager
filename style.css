@@ -31,6 +31,11 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 body {
     font-family: var(--font-body);
     background-color: var(--bg-dark);
@@ -261,6 +266,7 @@ body {
     padding: 2px;
     background: linear-gradient(135deg, var(--brand-primary), var(--accent-bravery));
 }
+
 
 .profile-avatar {
     width: 48px;
@@ -592,19 +598,49 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
 .hidden {
     display: none !important;
 }
 
-/* GitHub Link */
-.github-link {
+/* Top Actions Container */
+.top-actions {
     position: absolute;
     top: 24px;
     right: 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 100;
+}
+
+.download-app-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: 13px;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.download-app-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+}
+
+/* GitHub Link */
+.github-link {
     color: var(--text-muted);
     transition: all 0.3s ease;
-    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -620,5 +656,150 @@ body {
     color: var(--text-main);
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 520px) {
+    body {
+        padding: 15px 10px;
+    }
+    
+    .glass-panel {
+        border-radius: 20px;
+    }
+    
+    .header {
+        padding: 30px 20px 15px;
+    }
+    
+    .header h1 {
+        font-size: 22px;
+    }
+    
+    .subtitle {
+        font-size: 13px;
+    }
+    
+    .main-content {
+        padding: 0 20px 30px;
+    }
+    
+    .badge-options {
+        gap: 8px;
+    }
+    
+    .badge-option {
+        padding: 16px 5px;
+    }
+    
+    .badge-icon {
+        margin-bottom: 8px;
+    }
+    
+    .badge-icon img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .badge-name {
+        font-size: 11px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .premium-btn {
+        width: 100%;
+    }
+    
+    .top-actions {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .download-app-btn {
+        display: none;
+    }
+    
+    .github-link {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .profile-info h3 {
+        font-size: 16px;
+    }
+    
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .help-link {
+        display: none !important;
+    }
+}
+
+/* Help Link */
+.help-link {
+    font-size: 11px;
+    color: var(--brand-primary);
+    cursor: pointer;
+    text-transform: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.help-link:hover {
+    color: var(--brand-primary-hover);
+    text-decoration: underline;
+}
+
+/* UI/UX Polish for previously unstyled elements */
+.token-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.token-header label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.security-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.security-note svg {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Electron Specific Overrides */
+.electron-login-btn {
+    width: 100%;
+    margin-bottom: 15px;
+    background: #5865F2 !important;
+    border-color: #5865F2 !important;
+    color: white !important;
+}
+
+.electron-login-btn .discord-icon {
+    margin-right: 10px;
+    fill: white;
 }

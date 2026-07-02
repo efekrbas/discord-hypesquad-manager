@@ -65,6 +65,7 @@ class DiscordHypeSquadManager {
         // Manual Token Input
         const tokenInput = document.getElementById('token');
         const toggleBtn = document.getElementById('toggleToken');
+        const helpBtn = document.getElementById('helpTokenBtn');
 
         if (tokenInput) {
             tokenInput.addEventListener('input', this.onTokenChange.bind(this));
@@ -72,6 +73,31 @@ class DiscordHypeSquadManager {
         if (toggleBtn) {
             toggleBtn.addEventListener('click', this.toggleTokenVisibility.bind(this));
         }
+        
+        // Help Modal Events
+        if (helpBtn) {
+            helpBtn.addEventListener('click', () => {
+                document.getElementById('helpModal').classList.add('show');
+            });
+        }
+        
+        document.getElementById('closeModal')?.addEventListener('click', () => {
+            document.getElementById('helpModal').classList.remove('show');
+        });
+        
+        document.getElementById('helpModal')?.addEventListener('click', (e) => {
+            if(e.target.id === 'helpModal') e.target.classList.remove('show');
+        });
+
+        // Modal Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById('tab-' + e.target.dataset.tab).classList.add('active');
+            });
+        });
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', this.logout.bind(this));

@@ -44,7 +44,7 @@ You can use this application in two ways: **Web Browser** or **Desktop App**.
 ### Method 2: Desktop Application (Windows) - *Recommended*
 With the Desktop app, you don't need to manually find your token! You can simply click **"Login with Discord"**.
 
-1. Go to the **[Releases](../../releases)** page of this repository.
+1. Go to the **[Latest Release](https://github.com/efekrbas/discord-hypesquad-manager/releases/latest)** page of this repository.
 2. Choose your preferred download:
    - **`Discord HypeSquad Manager Setup 1.0.0.exe`**: Installs the app on your PC and adds a Desktop/Start Menu shortcut.
    - **`Discord HypeSquad Manager 1.0.0.exe`** (Portable): No installation required, just double-click and use!
