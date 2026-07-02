@@ -658,6 +658,10 @@ body {
     box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
 }
 
+.mobile-github-container {
+    display: none;
+}
+
 /* Mobile Responsiveness */
 @media screen and (max-width: 520px) {
     body {
@@ -715,17 +719,38 @@ body {
     }
     
     .top-actions {
-        top: 15px;
-        right: 15px;
-    }
-    
-    .download-app-btn {
         display: none;
     }
     
-    .github-link {
+    .mobile-github-container {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 50;
+    }
+    
+    .mobile-github-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 36px;
         height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        text-decoration: none;
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-github-btn span {
+        display: none;
+    }
+    
+    .mobile-github-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
     }
     
     .profile-info h3 {
