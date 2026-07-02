@@ -47,8 +47,6 @@ body {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
     position: relative;
 }
 
