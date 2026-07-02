@@ -674,6 +674,15 @@ body {
 /* Tablet Responsiveness */
 @media screen and (max-width: 1024px) {
     .download-app-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+        gap: 0;
+    }
+    
+    .download-app-btn span {
         display: none;
     }
 }
