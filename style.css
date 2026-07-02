@@ -40,8 +40,6 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-main);
     width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -53,6 +51,16 @@ body {
 }
 
 /* Background Orbs */
+.bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
 .bg-orb {
     position: absolute;
     border-radius: 50%;
@@ -661,6 +669,13 @@ body {
 
 .mobile-github-container {
     display: none;
+}
+
+/* Tablet Responsiveness */
+@media screen and (max-width: 1024px) {
+    .download-app-btn {
+        display: none;
+    }
 }
 
 /* Mobile Responsiveness */
