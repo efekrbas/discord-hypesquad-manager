@@ -31,16 +31,17 @@
     box-sizing: border-box;
 }
 
-html, body {
-    overflow-x: hidden;
+html {
     width: 100%;
-    max-width: 100%;
 }
 
 body {
     font-family: var(--font-body);
     background-color: var(--bg-dark);
     color: var(--text-main);
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
