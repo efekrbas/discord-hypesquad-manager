@@ -111,6 +111,10 @@ class DiscordHypeSquadManager {
             if (electronLoginContainer) electronLoginContainer.classList.remove('hidden');
             if (webTokenContainer) webTokenContainer.classList.add('hidden');
             
+            // Hide Download App button in Desktop App
+            const downloadBtn = document.querySelector('.download-app-btn');
+            if (downloadBtn) downloadBtn.classList.add('hidden');
+            
             if (electronLoginBtn) {
                 electronLoginBtn.addEventListener('click', this.loginWithElectron.bind(this));
             }
