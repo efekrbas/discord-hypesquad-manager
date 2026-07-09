@@ -6,8 +6,8 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 
 <div align="center">
-  <img src="images/webview" width="49%" alt="image" /> 
-  <img src="images/desktopview" width="49%" />
+  <img src="images/webview.png" width="49%" alt="image" /> 
+  <img src="images/desktopview.png" width="49%" />
 
 
 </div>
