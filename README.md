@@ -1,4 +1,4 @@
-# <img src="images/logo.png" width="32" height="32" align="center"> Discord HypeSquad Badge Manager
+# <img src="images/logo.png" width="32" height="32" align="top"> Discord HypeSquad Badge Manager
 
 A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
 
