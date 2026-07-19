@@ -13,7 +13,8 @@ function createWindow() {
             nodeIntegration: false,
             contextIsolation: true
         },
-        icon: path.join(__dirname, 'images/logo.png')
+        icon: path.join(__dirname, 'images/logo.png'),
+        autoHideMenuBar: true
     });
 
     mainWindow.loadFile('index.html');
@@ -61,7 +62,8 @@ ipcMain.handle('login-discord', async () => {
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true
-            }
+            },
+            autoHideMenuBar: true
         });
 
         const filter = {
@@ -87,7 +89,9 @@ ipcMain.handle('login-discord', async () => {
             callback({ requestHeaders: details.requestHeaders });
         });
 
-        loginWindow.loadURL('https://discord.com/login');
+        loginWindow.loadURL('https://discord.com/login', {
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        });
 
         loginWindow.on('closed', () => {
             loginWindow = null;

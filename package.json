@@ -1,6 +1,6 @@
 {
   "name": "discord-hypesquad-manager",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A modern web application that lets you easily manage your Discord HypeSquad badges.",
   "main": "main.js",
   "scripts": {
@@ -33,7 +33,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Discord HypeSquad Manager"
+      "shortcutName": "Discord HypeSquad Manager",
+      "artifactName": "Discord.HypeSquad.Manager.Setup.${version}.${ext}"
     }
   },
   "devDependencies": {
