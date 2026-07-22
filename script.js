@@ -364,7 +364,7 @@ class DiscordHypeSquadManager {
             }
         } catch (error) {
             console.error('API Error:', error);
-            this.showStatus('❌ Connection error! Please check your internet.', 'error');
+            this.showStatus(`❌ Error: ${error.message}`, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -406,7 +406,7 @@ class DiscordHypeSquadManager {
             }
         } catch (error) {
             console.error('API Error:', error);
-            this.showStatus('❌ Connection error! Please check your internet.', 'error');
+            this.showStatus(`❌ Error: ${error.message}`, 'error');
         } finally {
             this.showLoading(false);
         }
