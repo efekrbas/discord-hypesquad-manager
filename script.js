@@ -12,6 +12,19 @@ class DiscordHypeSquadManager {
         this.playIntroAnimation();
     }
 
+    async makeRequest(url, options) {
+        if (window.electronAPI && window.electronAPI.discordRequest) {
+            const response = await window.electronAPI.discordRequest(url, options);
+            return {
+                ok: response.ok,
+                status: response.status,
+                json: async () => response.data
+            };
+        } else {
+            return await fetch(url, options);
+        }
+    }
+
     playIntroAnimation() {
         // Initial page load animation using GSAP
         if (typeof gsap !== 'undefined') {
@@ -156,7 +169,7 @@ class DiscordHypeSquadManager {
         if (!this.token) return;
 
         try {
-            const response = await fetch('https://discord.com/api/v9/users/@me', {
+            const response = await this.makeRequest('https://discord.com/api/v9/users/@me', {
                 headers: {
                     'Authorization': this.token
                 }
@@ -337,7 +350,7 @@ class DiscordHypeSquadManager {
             const houseIdMap = { 1: 3, 2: 1, 3: 2 };
             const apiHouseId = houseIdMap[this.selectedHouse] || this.selectedHouse;
 
-            const response = await fetch('https://discord.com/api/v9/hypesquad/online', {
+            const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
                 method: 'POST',
                 headers: {
                     'Authorization': this.token,
@@ -379,7 +392,7 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            const response = await fetch('https://discord.com/api/v9/hypesquad/online', {
+            const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
                 method: 'DELETE',
                 headers: {
                     'Authorization': this.token
