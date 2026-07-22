@@ -17,21 +17,21 @@ class DiscordHypeSquadManager {
         if (typeof gsap !== 'undefined') {
             const tl = gsap.timeline();
             tl.fromTo('.glass-panel', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", clearProps: "transform" })
-              .fromTo('.gs-reveal', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.15, ease: "power2.out", clearProps: "transform" }, "-=0.4");
-            
+                .fromTo('.gs-reveal', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.15, ease: "power2.out", clearProps: "transform" }, "-=0.4");
+
             // Add 3D tilt effect on cards based on mouse move
             document.querySelectorAll('.badge-option').forEach(card => {
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    
+
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    
+
                     const rotateX = ((y - centerY) / centerY) * -10;
                     const rotateY = ((x - centerX) / centerX) * 10;
-                    
+
                     gsap.to(card, {
                         rotateX: rotateX,
                         rotateY: rotateY,
@@ -39,7 +39,7 @@ class DiscordHypeSquadManager {
                         ease: "power1.out"
                     });
                 });
-                
+
                 card.addEventListener('mouseleave', () => {
                     gsap.to(card, {
                         rotateX: 0,
@@ -73,20 +73,20 @@ class DiscordHypeSquadManager {
         if (toggleBtn) {
             toggleBtn.addEventListener('click', this.toggleTokenVisibility.bind(this));
         }
-        
+
         // Help Modal Events
         if (helpBtn) {
             helpBtn.addEventListener('click', () => {
                 document.getElementById('helpModal').classList.add('show');
             });
         }
-        
+
         document.getElementById('closeModal')?.addEventListener('click', () => {
             document.getElementById('helpModal').classList.remove('show');
         });
-        
+
         document.getElementById('helpModal')?.addEventListener('click', (e) => {
-            if(e.target.id === 'helpModal') e.target.classList.remove('show');
+            if (e.target.id === 'helpModal') e.target.classList.remove('show');
         });
 
         // Modal Tabs
@@ -110,11 +110,11 @@ class DiscordHypeSquadManager {
             console.log('Electron API detected. Enabling Discord Login.');
             if (electronLoginContainer) electronLoginContainer.classList.remove('hidden');
             if (webTokenContainer) webTokenContainer.classList.add('hidden');
-            
+
             // Hide Download App button in Desktop App
             const downloadBtn = document.querySelector('.download-app-btn');
             if (downloadBtn) downloadBtn.classList.add('hidden');
-            
+
             if (electronLoginBtn) {
                 electronLoginBtn.addEventListener('click', this.loginWithElectron.bind(this));
             }
@@ -182,11 +182,11 @@ class DiscordHypeSquadManager {
             gsap.to('#loginSection', {
                 opacity: 0, height: 0, duration: 0.4, ease: "power2.inOut", onComplete: () => {
                     document.getElementById('loginSection').classList.add('hidden');
-                    
+
                     const profileSection = document.getElementById('profileSection');
                     profileSection.classList.remove('hidden');
-                    gsap.fromTo(profileSection, 
-                        { opacity: 0, y: 20, height: 0 }, 
+                    gsap.fromTo(profileSection,
+                        { opacity: 0, y: 20, height: 0 },
                         { opacity: 1, y: 0, height: 'auto', duration: 0.5, ease: "back.out(1.5)", clearProps: "height" }
                     );
                 }
@@ -197,7 +197,7 @@ class DiscordHypeSquadManager {
         }
 
         const usernameEl = document.getElementById('username');
-        usernameEl.innerHTML = ''; 
+        usernameEl.innerHTML = '';
 
         const nameSpan = document.createElement('span');
         nameSpan.textContent = user.username;
@@ -238,11 +238,11 @@ class DiscordHypeSquadManager {
             gsap.to('#profileSection', {
                 opacity: 0, height: 0, duration: 0.4, ease: "power2.inOut", onComplete: () => {
                     document.getElementById('profileSection').classList.add('hidden');
-                    
+
                     const loginSection = document.getElementById('loginSection');
                     loginSection.classList.remove('hidden');
-                    gsap.fromTo(loginSection, 
-                        { opacity: 0, height: 0 }, 
+                    gsap.fromTo(loginSection,
+                        { opacity: 0, height: 0 },
                         { opacity: 1, height: 'auto', duration: 0.4, ease: "power2.out", clearProps: "height" }
                     );
                 }
@@ -278,7 +278,7 @@ class DiscordHypeSquadManager {
     toggleTokenVisibility() {
         const tokenInput = document.getElementById('token');
         const toggleBtn = document.getElementById('toggleToken');
-        
+
         // Simple SVG swap
         const eyeOpen = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
         const eyeClosed = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
@@ -311,8 +311,8 @@ class DiscordHypeSquadManager {
 
         // Add pop animation via GSAP
         if (typeof gsap !== 'undefined') {
-            gsap.fromTo(selectedOption.querySelector('img'), 
-                { scale: 0.8 }, 
+            gsap.fromTo(selectedOption.querySelector('img'),
+                { scale: 0.8 },
                 { scale: 1.1, duration: 0.4, ease: "back.out(2)" }
             );
         }
@@ -424,16 +424,16 @@ class DiscordHypeSquadManager {
     showStatus(message, type) {
         const statusElement = document.getElementById('status');
         statusElement.textContent = message;
-        
+
         // Use classList for smoother transitions
         statusElement.className = `status-message ${type} show`;
 
         if (this.statusTimeout) clearTimeout(this.statusTimeout);
-        
+
         this.statusTimeout = setTimeout(() => {
             statusElement.classList.remove('show');
             setTimeout(() => {
-                if(!statusElement.classList.contains('show')) {
+                if (!statusElement.classList.contains('show')) {
                     statusElement.textContent = '';
                     statusElement.className = 'status-message';
                 }
@@ -475,10 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
         const statusElement = document.getElementById('status');
-        if(!statusElement.textContent) {
+        if (!statusElement.textContent) {
             statusElement.textContent = '💡 Enter your Discord token to begin.';
             statusElement.className = 'status-message info show';
-            
+
             setTimeout(() => {
                 statusElement.classList.remove('show');
             }, 6000);

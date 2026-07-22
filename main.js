@@ -119,3 +119,27 @@ ipcMain.handle('logout-discord', async () => {
         console.error('Failed to clear session data:', error);
     }
 });
+
+// Native Node fetch wrapper to completely bypass any Chromium CORS / Cloudflare interceptors
+ipcMain.handle('discord-request', async (event, url, options) => {
+    try {
+        options = options || {};
+        options.headers = options.headers || {};
+        // Spoof headers manually because Node's native fetch bypasses Chromium's webRequest hooks
+        options.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        options.headers['Origin'] = 'https://discord.com';
+        options.headers['Referer'] = 'https://discord.com/';
+
+        const res = await fetch(url, options);
+        let data = null;
+        try { data = await res.json(); } catch(e) {}
+        
+        return {
+            ok: res.ok,
+            status: res.status,
+            data: data
+        };
+    } catch (err) {
+        throw new Error(err.message);
+    }
+});
