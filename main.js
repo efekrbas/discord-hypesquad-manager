@@ -31,7 +31,32 @@ function createWindow() {
     });
 }
 
+let resolveLoginPromise = null;
+
 app.whenReady().then(() => {
+    // Intercept Discord API requests globally to bypass CORS / Cloudflare restrictions
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+        { urls: ['https://discord.com/api/*'] },
+        (details, callback) => {
+            // Fake Origin and Referer to make it look like requests come from Discord itself
+            details.requestHeaders['Origin'] = 'https://discord.com';
+            details.requestHeaders['Referer'] = 'https://discord.com/';
+
+            const authHeader = details.requestHeaders['Authorization'];
+            if (authHeader && authHeader !== 'undefined' && authHeader !== 'null') {
+                if (loginWindow && !loginWindow.isDestroyed() && resolveLoginPromise) {
+                    console.log('Token found!');
+                    resolveLoginPromise(authHeader);
+                    resolveLoginPromise = null;
+                    loginWindow.close();
+                    loginWindow = null;
+                }
+            }
+
+            callback({ requestHeaders: details.requestHeaders });
+        }
+    );
+
     createWindow();
 
     app.on('activate', () => {
@@ -54,6 +79,8 @@ ipcMain.handle('login-discord', async () => {
             loginWindow.focus();
             return;
         }
+        
+        resolveLoginPromise = resolve;
 
         loginWindow = new BrowserWindow({
             width: 500,
@@ -67,43 +94,16 @@ ipcMain.handle('login-discord', async () => {
             autoHideMenuBar: true
         });
 
-        const filter = {
-            urls: ['https://discord.com/api/*']
-        };
-
-        // Intercept requests to find the token
-        session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
-            const authHeader = details.requestHeaders['Authorization'];
-            if (authHeader && authHeader !== 'undefined' && authHeader !== 'null') {
-                // Found token!
-                console.log('Token found!');
-
-                // Close login window
-                if (loginWindow && !loginWindow.isDestroyed()) {
-                    loginWindow.close();
-                }
-                loginWindow = null;
-
-                // Resolve the promise with the token
-                resolve(authHeader);
-            }
-            callback({ requestHeaders: details.requestHeaders });
-        });
-
         loginWindow.loadURL('https://discord.com/login', {
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         });
 
         loginWindow.on('closed', () => {
             loginWindow = null;
-            // If window closed without finding token, resolve with null
-            // This might happen if user closes the window manually
-            // But if we already resolved, this promise ignores it (which is fine)
-            // Ideally we should track if resolved, but for simplicity:
-            // The promise might hang if we don't handle rejection/resolve here.
-            // A better way is to rely on the fact that if we found the token, we resolve.
-            // If the user closes the window, we should probably resolve with null.
-            resolve(null);
+            if (resolveLoginPromise) {
+                resolveLoginPromise(null);
+                resolveLoginPromise = null;
+            }
         });
     });
 });
