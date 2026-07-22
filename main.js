@@ -11,7 +11,8 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
-            contextIsolation: true
+            contextIsolation: true,
+            webSecurity: false
         },
         icon: path.join(__dirname, 'images/logo.png'),
         autoHideMenuBar: true
