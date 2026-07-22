@@ -41,6 +41,8 @@ app.whenReady().then(() => {
             // Fake Origin and Referer to make it look like requests come from Discord itself
             details.requestHeaders['Origin'] = 'https://discord.com';
             details.requestHeaders['Referer'] = 'https://discord.com/';
+            // Spoof User-Agent to avoid Cloudflare blocking "Electron" requests
+            details.requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
             const authHeader = details.requestHeaders['Authorization'];
             if (authHeader && authHeader !== 'undefined' && authHeader !== 'null') {
