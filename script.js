@@ -341,8 +341,7 @@ class DiscordHypeSquadManager {
                 method: 'POST',
                 headers: {
                     'Authorization': this.token,
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     house_id: apiHouseId
@@ -383,8 +382,7 @@ class DiscordHypeSquadManager {
             const response = await fetch('https://discord.com/api/v9/hypesquad/online', {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': this.token,
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                    'Authorization': this.token
                 }
             });
 
