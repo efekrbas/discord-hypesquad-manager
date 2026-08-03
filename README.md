@@ -48,6 +48,11 @@ With the Desktop app, you don't need to manually find your token! You can simply
 2. Download **`Discord.HypeSquad.Manager.Setup.1.0.5.exe`** to install the app on your PC.
 3. Launch the application and click **Login with Discord**.
 
+## 📝 Notes & Updates
+
+- **Remove Badge Issue:** The "remove badge" feature sometimes doesn't work. I believe this is an issue related to Discord, but if it is related to my code, I will try to fix it.
+- **Desktop App Update:** An update for the desktop app is coming soon!
+
 ## ⚠️ Disclaimer
 
 - **Never share your token** with anyone.
