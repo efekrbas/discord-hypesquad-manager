@@ -4,8 +4,7 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 ## 📝 Notes & Updates
 
-- **Remove Badge Issue:** The "remove badge" feature sometimes doesn't work. I believe this is an issue related to Discord, but if it is related to my code, I will try to fix it.
-- **Desktop App Update:** An update for the desktop app is coming soon!
+- **Remove Badge Issue:** The “Remove Badge” feature is currently not working. This is an issue with Discord.
 
 ## App Screenshots (Web/Desktop) 
 
