@@ -1,6 +1,6 @@
 {
   "name": "discord-badge-manager",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A modern web application that lets you easily manage your Discord HypeSquad badges.",
   "main": "main.js",
   "scripts": {
