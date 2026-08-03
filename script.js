@@ -518,9 +518,15 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            if (this.selectedHouse === 'legacy') {
-                const base64 = 'QgWyAQIIAQ=='; // Pre-computed protobuf payload for hiding badge
+            let legacySuccess = false;
+            let hypeSuccess = false;
+            let attemptedLegacy = false;
+            let attemptedHype = false;
 
+            // If legacy is selected, or if nothing is selected, try removing legacy
+            if (this.selectedHouse === 'legacy' || this.selectedHouse === null) {
+                attemptedLegacy = true;
+                const base64 = 'QgWyAQIIAQ=='; // Pre-computed protobuf payload for hiding badge
                 const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
                     method: 'PATCH',
                     headers: { 'Authorization': this.token, 'Content-Type': 'application/json' },
@@ -528,51 +534,44 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('✅ Legacy badge removed successfully!', 'success');
+                    legacySuccess = true;
                     this.legacyBadgeEquipped = false;
-                    document.querySelectorAll('.badge-option').forEach(option => {
-                        option.classList.remove('selected');
-                    });
-                    this.selectedHouse = null;
-                    this.updateSetButtonState();
-                    this.fetchUserProfile();
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
-                } else if (response.status === 429) {
-                    const data = await response.json().catch(() => ({}));
-                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
-                } else {
-                    const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error removing legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showLoading(false);
+                    return;
                 }
-            } else {
+            }
+
+            // If a hypesquad house is selected, or if nothing is selected, try removing hypesquad
+            if (this.selectedHouse !== 'legacy' || this.selectedHouse === null) {
+                attemptedHype = true;
                 const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': this.token
-                    }
+                    headers: { 'Authorization': this.token }
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
-                    document.querySelectorAll('.badge-option').forEach(option => {
-                        option.classList.remove('selected');
-                    });
-                    this.selectedHouse = null;
-                    this.updateSetButtonState();
-                    this.fetchUserProfile();
+                    hypeSuccess = true;
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
-                } else if (response.status === 429) {
-                    const data = await response.json().catch(() => ({}));
-                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
-                } else {
-                    const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showLoading(false);
+                    return;
                 }
             }
+
+            if ((attemptedLegacy && legacySuccess) || (attemptedHype && hypeSuccess)) {
+                this.showStatus('✅ Seçili rozet(ler) başarıyla kaldırıldı!', 'success');
+                document.querySelectorAll('.badge-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                this.selectedHouse = null;
+                this.updateSetButtonState();
+                this.fetchUserProfile();
+            } else {
+                this.showStatus('❌ Rozet kaldırılamadı. Lütfen tekrar deneyin.', 'error');
+            }
+
         } catch (error) {
             console.error('API Error:', error);
             this.showStatus(`❌ Error: ${error.message}`, 'error');
