@@ -22,7 +22,14 @@ class DiscordHypeSquadManager {
                 json: async () => response.data
             };
         } else {
-            return await fetch(url, options);
+            try {
+                return await fetch(url, options);
+            } catch (error) {
+                if (error instanceof TypeError) {
+                    throw new Error("Tarayıcı bu isteği engelledi (CORS). Bu Discord API'sinin bir kısıtlamasıdır. 'Remove Badge' gibi özelliklerin sorunsuz çalışması için lütfen masaüstü uygulamasını kullanın.");
+                }
+                throw error;
+            }
         }
     }
 
