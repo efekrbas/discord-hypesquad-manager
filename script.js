@@ -310,11 +310,10 @@ class DiscordHypeSquadManager {
             legacyBadgeImg.src = `images/legacy.svg`;
             legacyBadgeImg.className = 'current-badge-icon legacy';
             legacyBadgeImg.title = 'Legacy Username Badge';
-            legacyBadgeImg.style.width = '16px';
-            legacyBadgeImg.style.height = '16px';
-            legacyBadgeImg.style.marginLeft = '-6px'; // Counteract flex gap and SVG padding to bring badges closer
-            legacyBadgeImg.style.borderRadius = '50%';
-            legacyBadgeImg.style.objectFit = 'cover';
+            legacyBadgeImg.style.width = '28px';
+            legacyBadgeImg.style.height = '28px';
+            legacyBadgeImg.style.marginLeft = '-10px'; // Counteract flex gap and SVG padding
+            legacyBadgeImg.style.marginTop = '-1px'; // Fine-tune vertical alignment
             usernameEl.appendChild(legacyBadgeImg);
         }
 
