@@ -1,8 +1,8 @@
-﻿# Discord Badge Manager
+# Discord Badge Manager
 
 A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
 
-## ğŸ“ Notes & Updates
+## 📝 Notes & Updates
 
 - **Remove Badge Issue:** The "remove badge" feature sometimes doesn't work. I believe this is an issue related to Discord, but if it is related to my code, I will try to fix it.
 - **Desktop App Update:** An update for the desktop app is coming soon!
@@ -18,15 +18,15 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 </div>
 
 
-## âœ¨ Features
+## ✨ Features
 
-- ğŸŒ **Web Version**: Use directly in your browser without downloading anything.
-- ğŸ–¥ï¸ **Desktop Application**: Runs securely on your PC (Windows) with a dedicated Setup Installer or a Portable EXE.
-- ğŸ”’ **One-Click Secure Login**: Log in seamlessly via Discord's official login page in the Desktop App without ever handling tokens!
-- ğŸ‘¤ **Profile View**: Displays your current Avatar, Username, and HypeSquad Badge.
-- âš¡ **Instant Switching**: Switch between Bravery, Brilliance, and Balance instantly.
-- ğŸ›¡ï¸ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
-- ğŸ¨ **Premium UI**: Beautiful, fully responsive glassmorphism design with smooth GSAP animations.
+- 🌐 **Web Version**: Use directly in your browser without downloading anything.
+- 🖥️ **Desktop Application**: Runs securely on your PC (Windows) with a dedicated Setup Installer or a Portable EXE.
+- 🔒 **One-Click Secure Login**: Log in seamlessly via Discord's official login page in the Desktop App without ever handling tokens!
+- 👤 **Profile View**: Displays your current Avatar, Username, and HypeSquad Badge.
+- ⚡ **Instant Switching**: Switch between Bravery, Brilliance, and Balance instantly.
+- 🛡️ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
+- 🎨 **Premium UI**: Beautiful, fully responsive glassmorphism design with smooth GSAP animations.
 
 ## Badges
 
@@ -54,12 +54,12 @@ With the Desktop app, you don't need to manually find your token! You can simply
 2. Download **`Discord.HypeSquad.Manager.Setup.1.0.5.exe`** to install the app on your PC.
 3. Launch the application and click **Login with Discord**.
 
-## âš ï¸ Disclaimer
+## ⚠️ Disclaimer
 
 - **Never share your token** with anyone.
 - Use this tool responsibly and in accordance with Discord's Terms of Service.
 
-## ğŸ“„ License
+## 📄 License
 
 MIT
 
