@@ -2,6 +2,7 @@ class DiscordHypeSquadManager {
     constructor() {
         this.selectedHouse = null;
         this.token = null;
+        this.legacyBadgeEquipped = undefined;
         this.init();
     }
 
@@ -166,10 +167,11 @@ class DiscordHypeSquadManager {
     }
 
     async fetchUserProfile() {
-        if (!this.token) return;
+        this.showStatus('⏳ Fetching profile...', 'info');
 
         try {
-            const response = await this.makeRequest('https://discord.com/api/v9/users/@me', {
+            // Bypass cache to get the most up-to-date flags
+            const response = await this.makeRequest(`https://discord.com/api/v9/users/@me?_=${Date.now()}`, {
                 headers: {
                     'Authorization': this.token
                 }
@@ -177,11 +179,76 @@ class DiscordHypeSquadManager {
 
             if (response.ok) {
                 const user = await response.json();
+                
+                if (this.legacyBadgeEquipped === undefined) {
+                    try {
+                        const settingsResponse = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
+                            headers: { 'Authorization': this.token }
+                        });
+                        if (settingsResponse.ok) {
+                            const settingsData = await settingsResponse.json();
+                            if (settingsData.settings) {
+                                const binaryString = atob(settingsData.settings);
+                                let hexString = '';
+                                for (let i = 0; i < binaryString.length; i++) {
+                                    hexString += binaryString.charCodeAt(i).toString(16).padStart(2, '0');
+                                }
+                                if (hexString.includes('b201020801')) {
+                                    this.legacyBadgeEquipped = false;
+                                } else {
+                                    this.legacyBadgeEquipped = user.discriminator === '0';
+                                }
+                            } else {
+                                this.legacyBadgeEquipped = user.discriminator === '0';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error fetching settings:', e);
+                        this.legacyBadgeEquipped = false;
+                    }
+                }
+
+                // Extract HypeSquad house from flags
+                let mergedFlags = (user.flags || 0) | (user.public_flags || 0);
+                
+                // If no HypeSquad flag found, fallback to checking the profile endpoint
+                if (!(mergedFlags & 64) && !(mergedFlags & 128) && !(mergedFlags & 256)) {
+                    try {
+                        const profileRes = await this.makeRequest(`https://discord.com/api/v9/users/${user.id}/profile?_=${Date.now()}`, {
+                            headers: { 'Authorization': this.token }
+                        });
+                        if (profileRes.ok) {
+                            const profileData = await profileRes.json();
+                            const badges = profileData.badges || [];
+                            for (const badge of badges) {
+                                const idStr = badge.id || '';
+                                const iconStr = badge.icon || '';
+                                if (idStr.includes('house_1') || iconStr === '8a88d63823d8a71cd5e390baa45efa02') mergedFlags |= 64; // Bravery
+                                else if (idStr.includes('house_2') || iconStr === '011940fd013da3f7fb926e4a1cd2e618') mergedFlags |= 128; // Brilliance
+                                else if (idStr.includes('house_3') || iconStr === '3aa41de486fa12454c3761e8e223442e') mergedFlags |= 256; // Balance
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Fallback profile fetch failed:', e);
+                    }
+                }
+                user.merged_flags = mergedFlags;
+
                 this.updateProfileUI(user);
                 this.updateSetButtonState();
             } else {
-                this.logout();
-                this.showStatus('❌ Session expired. Please login again.', 'error');
+                // Only clear token if we already had a valid session previously, otherwise just show error
+                const tokenInput = document.getElementById('token');
+                const isTyping = tokenInput && tokenInput.value.length > 0 && document.activeElement === tokenInput;
+                
+                if (!isTyping) {
+                    this.logout();
+                } else {
+                    this.token = null;
+                    localStorage.removeItem('discord_token');
+                    this.updateSetButtonState();
+                }
+                this.showStatus('❌ Invalid token or session expired.', 'error');
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
@@ -216,12 +283,12 @@ class DiscordHypeSquadManager {
         nameSpan.textContent = user.username;
         usernameEl.appendChild(nameSpan);
 
-        const flags = user.flags || user.public_flags || 0;
+        const flags = user.merged_flags !== undefined ? user.merged_flags : ((user.flags || 0) | (user.public_flags || 0));
         let badgeIcon = null;
 
-        if (flags & 64) badgeIcon = 'hypesquadbravery.svg';
+        if (flags & 256) badgeIcon = 'hypesquadbalance.svg';
         else if (flags & 128) badgeIcon = 'hypesquadbrilliance.svg';
-        else if (flags & 256) badgeIcon = 'hypesquadbalance.svg';
+        else if (flags & 64) badgeIcon = 'hypesquadbravery.svg';
 
         if (badgeIcon) {
             const badgeImg = document.createElement('img');
@@ -231,16 +298,55 @@ class DiscordHypeSquadManager {
             usernameEl.appendChild(badgeImg);
         }
 
+        if (this.legacyBadgeEquipped) {
+            const legacyBadgeImg = document.createElement('img');
+            legacyBadgeImg.src = `images/badge.png`;
+            legacyBadgeImg.className = 'current-badge-icon legacy';
+            legacyBadgeImg.title = 'Legacy Username Badge';
+            legacyBadgeImg.style.width = '16px';
+            legacyBadgeImg.style.height = '16px';
+            legacyBadgeImg.style.marginLeft = '-6px'; // Counteract flex gap and SVG padding to bring badges closer
+            legacyBadgeImg.style.borderRadius = '50%';
+            legacyBadgeImg.style.objectFit = 'cover';
+            usernameEl.appendChild(legacyBadgeImg);
+        }
+
         const avatarUrl = user.avatar
             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
             : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
 
         document.getElementById('userAvatar').src = avatarUrl;
+
+        // Auto-select current house if none selected
+        if (!this.selectedHouse) {
+            let currentHouse = null;
+            if (flags & 256) currentHouse = '1';
+            else if (flags & 128) currentHouse = '3';
+            else if (flags & 64) currentHouse = '2';
+            
+            let houseToSelect = currentHouse;
+            // If they don't have a HypeSquad badge but have legacy, select legacy
+            if (!houseToSelect && this.legacyBadgeEquipped) {
+                houseToSelect = 'legacy';
+            }
+
+            if (houseToSelect) {
+                this.selectedHouse = houseToSelect === 'legacy' ? 'legacy' : parseInt(houseToSelect);
+                document.querySelectorAll('.badge-option').forEach(option => {
+                    option.classList.remove('selected');
+                    if (option.dataset.house === houseToSelect) {
+                        option.classList.add('selected');
+                    }
+                });
+                this.updateSetButtonState();
+            }
+        }
     }
 
     async logout() {
         this.token = null;
         this.selectedHouse = null;
+        this.legacyBadgeEquipped = undefined;
         localStorage.removeItem('discord_token');
 
         if (window.electronAPI) {
@@ -309,6 +415,14 @@ class DiscordHypeSquadManager {
         this.token = this.sanitizeToken(event.target.value);
         localStorage.setItem('discord_token', this.token);
         this.updateSetButtonState();
+
+        // Auto login when pasting a token
+        if (this.tokenTimeout) clearTimeout(this.tokenTimeout);
+        this.tokenTimeout = setTimeout(() => {
+            if (this.token && this.token.length > 50) {
+                this.fetchUserProfile();
+            }
+        }, 100);
     }
 
     selectBadge(event) {
@@ -320,7 +434,8 @@ class DiscordHypeSquadManager {
         // Add selection
         const selectedOption = event.currentTarget;
         selectedOption.classList.add('selected');
-        this.selectedHouse = parseInt(selectedOption.dataset.house);
+        const houseVal = selectedOption.dataset.house;
+        this.selectedHouse = houseVal === 'legacy' ? 'legacy' : parseInt(houseVal);
 
         // Add pop animation via GSAP
         if (typeof gsap !== 'undefined') {
@@ -347,33 +462,58 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            const houseIdMap = { 1: 3, 2: 1, 3: 2 };
-            const apiHouseId = houseIdMap[this.selectedHouse] || this.selectedHouse;
+            if (this.selectedHouse === 'legacy') {
+                const base64 = 'QgWyAQIIAA=='; // Pre-computed protobuf payload for showing badge
 
-            const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
-                method: 'POST',
-                headers: {
-                    'Authorization': this.token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    house_id: apiHouseId
-                })
-            });
+                const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
+                    method: 'PATCH',
+                    headers: { 'Authorization': this.token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings: base64 })
+                });
 
-            if (response.ok) {
-                const houseName = this.getHouseName(this.selectedHouse);
-                this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
-                this.fetchUserProfile();
-            } else if (response.status === 401) {
-                this.showStatus('❌ Invalid token! Please check your token.', 'error');
-            } else if (response.status === 429) {
-                const data = await response.json().catch(() => ({}));
-                const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                if (response.ok || response.status === 204) {
+                    this.showStatus('✅ Legacy badge equipped successfully!', 'success');
+                    this.legacyBadgeEquipped = true;
+                    this.fetchUserProfile();
+                } else if (response.status === 401) {
+                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error equipping legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                }
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                const houseIdMap = { 1: 3, 2: 1, 3: 2 };
+                const apiHouseId = houseIdMap[this.selectedHouse] || this.selectedHouse;
+
+                const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': this.token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        house_id: apiHouseId
+                    })
+                });
+
+                if (response.ok) {
+                    const houseName = this.getHouseName(this.selectedHouse);
+                    this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
+                    this.fetchUserProfile();
+                } else if (response.status === 401) {
+                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                }
             }
         } catch (error) {
             console.error('API Error:', error);
@@ -392,30 +532,60 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': this.token
-                }
-            });
+            if (this.selectedHouse === 'legacy') {
+                const base64 = 'QgWyAQIIAQ=='; // Pre-computed protobuf payload for hiding badge
 
-            if (response.ok || response.status === 204) {
-                this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
-                document.querySelectorAll('.badge-option').forEach(option => {
-                    option.classList.remove('selected');
+                const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
+                    method: 'PATCH',
+                    headers: { 'Authorization': this.token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings: base64 })
                 });
-                this.selectedHouse = null;
-                this.updateSetButtonState();
-                this.fetchUserProfile();
-            } else if (response.status === 401) {
-                this.showStatus('❌ Invalid token! Please check your token.', 'error');
-            } else if (response.status === 429) {
-                const data = await response.json().catch(() => ({}));
-                const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+
+                if (response.ok || response.status === 204) {
+                    this.showStatus('✅ Legacy badge removed successfully!', 'success');
+                    this.legacyBadgeEquipped = false;
+                    document.querySelectorAll('.badge-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    this.selectedHouse = null;
+                    this.updateSetButtonState();
+                    this.fetchUserProfile();
+                } else if (response.status === 401) {
+                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error removing legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                }
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': this.token
+                    }
+                });
+
+                if (response.ok || response.status === 204) {
+                    this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
+                    document.querySelectorAll('.badge-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    this.selectedHouse = null;
+                    this.updateSetButtonState();
+                    this.fetchUserProfile();
+                } else if (response.status === 401) {
+                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                }
             }
         } catch (error) {
             console.error('API Error:', error);

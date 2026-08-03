@@ -14,7 +14,6 @@ function createWindow() {
             contextIsolation: true,
             webSecurity: false
         },
-        icon: path.join(__dirname, 'images/logo.png'),
         autoHideMenuBar: true
     });
 
