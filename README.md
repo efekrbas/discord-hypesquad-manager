@@ -28,13 +28,14 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 - 🛡️ **Rate Limit Handling**: Smartly handles Discord's rate limits by telling you exactly when you can switch again.
 - 🎨 **Premium UI**: Beautiful, fully responsive glassmorphism design with smooth GSAP animations.
 
-## HypeSquad Houses
+## Badges
 
 | House | Badge | Description |
 |:---:|:---:|---|
 | **Bravery** | <img src="images/hypesquadbravery.svg" width="48" height="48" alt="Bravery"> | Courage and risk-taking |
 | **Brilliance** | <img src="images/hypesquadbrilliance.svg" width="48" height="48" alt="Brilliance"> | Creativity and innovation |
 | **Balance** | <img src="images/hypesquadbalance.svg" width="48" height="48" alt="Balance"> | Harmony and balance |
+| **Legacy** | <img src="images/legacy.svg" width="48" height="48" alt="Legacy"> | HypeSquad Events (Legacy) |
 
 ## How to Use
 
