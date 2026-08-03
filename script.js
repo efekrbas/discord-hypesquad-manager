@@ -307,7 +307,7 @@ class DiscordHypeSquadManager {
 
         if (this.legacyBadgeEquipped) {
             const legacyBadgeImg = document.createElement('img');
-            legacyBadgeImg.src = `images/badge.png`;
+            legacyBadgeImg.src = `images/legacy.svg`;
             legacyBadgeImg.className = 'current-badge-icon legacy';
             legacyBadgeImg.title = 'Legacy Username Badge';
             legacyBadgeImg.style.width = '16px';
