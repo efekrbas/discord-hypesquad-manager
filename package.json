@@ -1,5 +1,5 @@
-{
-  "name": "discord-hypesquad-manager",
+﻿{
+  "name": "discord-badge-manager",
   "version": "1.0.5",
   "description": "A modern web application that lets you easily manage your Discord HypeSquad badges.",
   "main": "main.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/efekrbas/discord-hypesquad-manager.git"
+    "url": "git+https://github.com/efekrbas/discord-badge-manager.git"
   },
   "keywords": [],
   "author": "",
