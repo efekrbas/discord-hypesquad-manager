@@ -78,6 +78,11 @@ body::after {
     mask-repeat: no-repeat;
 }
 
+/* Hide the background GIF completely in the Electron desktop app for a clean UI */
+body.electron-app::after {
+    display: none !important;
+}
+
 /* Background Orbs */
 .bg-container {
     position: fixed;
@@ -721,7 +726,8 @@ body::after {
 }
 
 .download-app-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
     color: var(--text-main);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
@@ -744,7 +750,8 @@ body::after {
 
 .github-link:hover {
     color: var(--text-main);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
 }

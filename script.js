@@ -3,6 +3,7 @@ class DiscordHypeSquadManager {
         this.selectedHouse = null;
         this.token = null;
         this.legacyBadgeEquipped = undefined;
+        this.legacyEligible = false;
         this.init();
     }
 
@@ -26,7 +27,7 @@ class DiscordHypeSquadManager {
                 return await fetch(url, options);
             } catch (error) {
                 if (error instanceof TypeError) {
-                    throw new Error("Tarayıcı bu isteği engelledi (CORS). Bu Discord API'sinin bir kısıtlamasıdır. 'Remove Badge' gibi özelliklerin sorunsuz çalışması için lütfen masaüstü uygulamasını kullanın.");
+                    throw new Error("Browser blocked this request (CORS).");
                 }
                 throw error;
             }
@@ -173,8 +174,10 @@ class DiscordHypeSquadManager {
         }
     }
 
-    async fetchUserProfile() {
-        this.showStatus('⏳ Fetching profile...', 'info');
+    async fetchUserProfile(silent = false) {
+        if (!silent) {
+            this.showStatus('⏳ Fetching profile...', 'info');
+        }
 
         try {
             // Bypass cache to get the most up-to-date flags
@@ -200,13 +203,10 @@ class DiscordHypeSquadManager {
                                 for (let i = 0; i < binaryString.length; i++) {
                                     hexString += binaryString.charCodeAt(i).toString(16).padStart(2, '0');
                                 }
-                                if (hexString.includes('b201020801')) {
-                                    this.legacyBadgeEquipped = false;
-                                } else {
-                                    this.legacyBadgeEquipped = user.discriminator === '0';
-                                }
+                                // b201020801 means legacy badge is explicitly hidden
+                                this.legacyBadgeEquipped = !hexString.includes('b201020801');
                             } else {
-                                this.legacyBadgeEquipped = user.discriminator === '0';
+                                this.legacyBadgeEquipped = true;
                             }
                         }
                     } catch (e) {
@@ -218,15 +218,27 @@ class DiscordHypeSquadManager {
                 // Extract HypeSquad house from flags
                 let mergedFlags = (user.flags || 0) | (user.public_flags || 0);
                 
-                // If no HypeSquad flag found, fallback to checking the profile endpoint
-                if (!(mergedFlags & 64) && !(mergedFlags & 128) && !(mergedFlags & 256)) {
-                    try {
-                        const profileRes = await this.makeRequest(`https://discord.com/api/v9/users/${user.id}/profile?_=${Date.now()}`, {
-                            headers: { 'Authorization': this.token }
-                        });
-                        if (profileRes.ok) {
-                            const profileData = await profileRes.json();
-                            const badges = profileData.badges || [];
+                // Always fetch profile to check for legacy badge eligibility and HypeSquad fallback
+                try {
+                    const profileRes = await this.makeRequest(`https://discord.com/api/v9/users/${user.id}/profile?_=${Date.now()}`, {
+                        headers: { 'Authorization': this.token }
+                    });
+                    if (profileRes.ok) {
+                        const profileData = await profileRes.json();
+                        const badges = profileData.badges || [];
+                        
+                        // Check legacy badge eligibility from actual profile badges
+                        this.legacyEligible = badges.some(b => (b.id || '').includes('legacy_username'));
+                        
+                        // If user is not eligible, force legacyBadgeEquipped to false
+                        if (!this.legacyEligible) {
+                            this.legacyBadgeEquipped = false;
+                        }
+                        
+                        this.updateLegacyCardVisibility();
+                        
+                        // HypeSquad fallback from profile badges
+                        if (!(mergedFlags & 64) && !(mergedFlags & 128) && !(mergedFlags & 256)) {
                             for (const badge of badges) {
                                 const idStr = badge.id || '';
                                 const iconStr = badge.icon || '';
@@ -235,9 +247,12 @@ class DiscordHypeSquadManager {
                                 else if (idStr.includes('house_3') || iconStr === '3aa41de486fa12454c3761e8e223442e') mergedFlags |= 256; // Balance
                             }
                         }
-                    } catch (e) {
-                        console.error('Fallback profile fetch failed:', e);
                     }
+                } catch (e) {
+                    console.error('Profile fetch failed:', e);
+                    this.legacyEligible = false;
+                    this.legacyBadgeEquipped = false;
+                    this.updateLegacyCardVisibility();
                 }
                 user.merged_flags = mergedFlags;
 
@@ -325,14 +340,16 @@ class DiscordHypeSquadManager {
 
         // Auto-select behavior has been disabled per user request
         // The user will start with no house selected by default.
-
+        this.updateLegacyCardVisibility();
     }
 
     async logout() {
         this.token = null;
         this.selectedHouse = null;
         this.legacyBadgeEquipped = undefined;
+        this.legacyEligible = false;
         localStorage.removeItem('discord_token');
+        this.updateLegacyCardVisibility();
 
         if (window.electronAPI) {
             await window.electronAPI.logout();
@@ -433,6 +450,26 @@ class DiscordHypeSquadManager {
         this.updateSetButtonState();
     }
 
+    updateLegacyCardVisibility() {
+        const legacyCard = document.querySelector('.badge-option[data-house="legacy"]');
+        if (!legacyCard) return;
+
+        if (this.legacyEligible) {
+            legacyCard.style.display = '';
+            legacyCard.style.opacity = '1';
+            legacyCard.style.pointerEvents = '';
+            legacyCard.title = '';
+        } else {
+            legacyCard.style.display = 'none';
+            // If legacy was selected, deselect it
+            if (this.selectedHouse === 'legacy') {
+                legacyCard.classList.remove('selected');
+                this.selectedHouse = null;
+                this.updateSetButtonState();
+            }
+        }
+    }
+
     updateSetButtonState() {
         const setBadgeBtn = document.getElementById('setBadge');
         setBadgeBtn.disabled = !(this.token && this.selectedHouse);
@@ -459,7 +496,7 @@ class DiscordHypeSquadManager {
                 if (response.ok || response.status === 204) {
                     this.showStatus('✅ Legacy badge equipped successfully!', 'success');
                     this.legacyBadgeEquipped = true;
-                    this.fetchUserProfile();
+                    this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -488,7 +525,7 @@ class DiscordHypeSquadManager {
                 if (response.ok) {
                     const houseName = this.getHouseName(this.selectedHouse);
                     this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
-                    this.fetchUserProfile();
+                    this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -560,15 +597,15 @@ class DiscordHypeSquadManager {
             }
 
             if ((attemptedLegacy && legacySuccess) || (attemptedHype && hypeSuccess)) {
-                this.showStatus('✅ Seçili rozet(ler) başarıyla kaldırıldı!', 'success');
+                this.showStatus('✅ Badge(s) removed successfully!', 'success');
                 document.querySelectorAll('.badge-option').forEach(option => {
                     option.classList.remove('selected');
                 });
                 this.selectedHouse = null;
                 this.updateSetButtonState();
-                this.fetchUserProfile();
+                this.fetchUserProfile(true);
             } else {
-                this.showStatus('❌ Rozet kaldırılamadı. Lütfen tekrar deneyin.', 'error');
+                this.showStatus('❌ Failed to remove badge. Please try again.', 'error');
             }
 
         } catch (error) {
@@ -638,6 +675,11 @@ class DiscordHypeSquadManager {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Detect if running in Electron
+    if (navigator.userAgent.includes('Electron')) {
+        document.body.classList.add('electron-app');
+    }
+
     new DiscordHypeSquadManager();
 
     setTimeout(() => {

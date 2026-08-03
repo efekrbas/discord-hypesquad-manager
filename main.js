@@ -6,8 +6,9 @@ let loginWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 700,
+        width: 1024,
+        height: 720,
+        icon: path.join(__dirname, 'images', 'icon.ico'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
