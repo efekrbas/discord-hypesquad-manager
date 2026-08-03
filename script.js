@@ -317,30 +317,9 @@ class DiscordHypeSquadManager {
 
         document.getElementById('userAvatar').src = avatarUrl;
 
-        // Auto-select current house if none selected
-        if (!this.selectedHouse) {
-            let currentHouse = null;
-            if (flags & 256) currentHouse = '1';
-            else if (flags & 128) currentHouse = '3';
-            else if (flags & 64) currentHouse = '2';
-            
-            let houseToSelect = currentHouse;
-            // If they don't have a HypeSquad badge but have legacy, select legacy
-            if (!houseToSelect && this.legacyBadgeEquipped) {
-                houseToSelect = 'legacy';
-            }
+        // Auto-select behavior has been disabled per user request
+        // The user will start with no house selected by default.
 
-            if (houseToSelect) {
-                this.selectedHouse = houseToSelect === 'legacy' ? 'legacy' : parseInt(houseToSelect);
-                document.querySelectorAll('.badge-option').forEach(option => {
-                    option.classList.remove('selected');
-                    if (option.dataset.house === houseToSelect) {
-                        option.classList.add('selected');
-                    }
-                });
-                this.updateSetButtonState();
-            }
-        }
     }
 
     async logout() {
