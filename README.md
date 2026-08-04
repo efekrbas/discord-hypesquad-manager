@@ -1,6 +1,6 @@
 # Discord Badge Manager
 
-A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad badges without complex manual requests.
+A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad and Legacy badges without complex manual requests.
 
 ## 📝 Notes & Updates
 
