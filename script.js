@@ -161,7 +161,7 @@ class DiscordHypeSquadManager {
             const token = await window.electronAPI.loginWithDiscord();
             if (token) {
                 this.token = this.sanitizeToken(token);
-                localStorage.setItem('discord_token', this.token);
+                sessionStorage.setItem('discord_token', this.token);
                 this.updateSetButtonState();
                 await this.fetchUserProfile();
             } else {
@@ -176,7 +176,7 @@ class DiscordHypeSquadManager {
     }
 
     checkSavedSession() {
-        const savedToken = localStorage.getItem('discord_token');
+        const savedToken = sessionStorage.getItem('discord_token');
         if (savedToken) {
             this.token = this.sanitizeToken(savedToken);
             this.fetchUserProfile();
