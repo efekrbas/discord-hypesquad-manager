@@ -409,7 +409,7 @@ body.electron-app::after {
     border-radius: 16px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, translate 0.3s ease-out, scale 0.3s ease-out;
     overflow: hidden;
     transform-style: preserve-3d;
 }
@@ -459,7 +459,7 @@ body.electron-app::after {
 .badge-option:hover {
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-5px);
+    translate: 0 -5px;
 }
 
 .badge-option:hover .card-glow {
@@ -477,7 +477,8 @@ body.electron-app::after {
 /* Selected States with Accent Colors */
 .badge-option.selected {
     background: rgba(0, 0, 0, 0.4);
-    transform: translateY(-8px) scale(1.02);
+    translate: 0 -8px;
+    scale: 1.02;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 

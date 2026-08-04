@@ -43,6 +43,9 @@ class DiscordHypeSquadManager {
 
             // Add 3D tilt effect on cards based on mouse move
             document.querySelectorAll('.badge-option').forEach(card => {
+                // Force GSAP to cache transform values as 0/1 so it never reads and compounds the CSS translate/scale properties.
+                gsap.set(card, { x: 0, y: 0, scale: 1, rotateX: 0, rotateY: 0 });
+
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -55,6 +58,9 @@ class DiscordHypeSquadManager {
                     const rotateY = ((x - centerX) / centerX) * 10;
 
                     gsap.to(card, {
+                        x: 0,
+                        y: 0,
+                        scale: 1,
                         rotateX: rotateX,
                         rotateY: rotateY,
                         duration: 0.3,
@@ -64,6 +70,9 @@ class DiscordHypeSquadManager {
 
                 card.addEventListener('mouseleave', () => {
                     gsap.to(card, {
+                        x: 0,
+                        y: 0,
+                        scale: 1,
                         rotateX: 0,
                         rotateY: 0,
                         duration: 0.5,
@@ -428,13 +437,19 @@ class DiscordHypeSquadManager {
     }
 
     selectBadge(event) {
+        const selectedOption = event.currentTarget;
+        
+        // Prevent re-triggering animations if already selected
+        if (selectedOption.classList.contains('selected')) {
+            return;
+        }
+
         // Animate deselect
         document.querySelectorAll('.badge-option.selected').forEach(option => {
             option.classList.remove('selected');
         });
 
         // Add selection
-        const selectedOption = event.currentTarget;
         selectedOption.classList.add('selected');
         const houseVal = selectedOption.dataset.house;
         this.selectedHouse = houseVal === 'legacy' ? 'legacy' : parseInt(houseVal);
