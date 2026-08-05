@@ -779,6 +779,10 @@ body.electron-app::after {
 
 /* Mobile Responsiveness */
 @media screen and (max-width: 520px) {
+    body::after {
+        display: none !important;
+    }
+
     body {
         padding: 15px 10px;
     }
