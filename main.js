@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain, session } = require('electron');
+const { app, BrowserWindow, ipcMain, session, safeStorage } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let mainWindow;
 let loginWindow;
@@ -141,5 +142,52 @@ ipcMain.handle('discord-request', async (event, url, options) => {
         };
     } catch (err) {
         throw new Error(err.message);
+    }
+});
+
+const getTokenPath = () => path.join(app.getPath('userData'), 'discord_token.enc');
+
+ipcMain.handle('save-token', async (event, token) => {
+    try {
+        if (safeStorage.isEncryptionAvailable()) {
+            const encrypted = safeStorage.encryptString(token);
+            fs.writeFileSync(getTokenPath(), encrypted);
+        } else {
+            fs.writeFileSync(getTokenPath(), Buffer.from(token, 'utf-8')); 
+        }
+        return true;
+    } catch (e) {
+        console.error('Failed to save token:', e);
+        return false;
+    }
+});
+
+ipcMain.handle('get-token', async () => {
+    try {
+        const tokenPath = getTokenPath();
+        if (fs.existsSync(tokenPath)) {
+            const encrypted = fs.readFileSync(tokenPath);
+            if (safeStorage.isEncryptionAvailable()) {
+                return safeStorage.decryptString(encrypted);
+            } else {
+                return encrypted.toString('utf-8');
+            }
+        }
+    } catch (e) {
+        console.error('Failed to read token:', e);
+    }
+    return null;
+});
+
+ipcMain.handle('delete-token', async () => {
+    try {
+        const tokenPath = getTokenPath();
+        if (fs.existsSync(tokenPath)) {
+            fs.unlinkSync(tokenPath);
+        }
+        return true;
+    } catch (e) {
+        console.error('Failed to delete token:', e);
+        return false;
     }
 });

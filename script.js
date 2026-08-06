@@ -14,6 +14,30 @@ class DiscordHypeSquadManager {
         this.playIntroAnimation();
     }
 
+    async saveTokenData(token) {
+        if (window.electronAPI) {
+            await window.electronAPI.saveToken(token);
+        } else {
+            localStorage.setItem('discord_token', token);
+        }
+    }
+
+    async loadTokenData() {
+        if (window.electronAPI) {
+            return await window.electronAPI.getToken();
+        } else {
+            return localStorage.getItem('discord_token');
+        }
+    }
+
+    async deleteTokenData() {
+        if (window.electronAPI) {
+            await window.electronAPI.deleteToken();
+        } else {
+            localStorage.removeItem('discord_token');
+        }
+    }
+
     async makeRequest(url, options) {
         if (window.electronAPI && window.electronAPI.discordRequest) {
             const response = await window.electronAPI.discordRequest(url, options);
@@ -161,7 +185,7 @@ class DiscordHypeSquadManager {
             const token = await window.electronAPI.loginWithDiscord();
             if (token) {
                 this.token = this.sanitizeToken(token);
-                localStorage.setItem('discord_token', this.token);
+                await this.saveTokenData(this.token);
                 this.updateSetButtonState();
                 await this.fetchUserProfile();
             } else {
@@ -175,8 +199,8 @@ class DiscordHypeSquadManager {
         }
     }
 
-    checkSavedSession() {
-        const savedToken = localStorage.getItem('discord_token');
+    async checkSavedSession() {
+        const savedToken = await this.loadTokenData();
         if (savedToken) {
             this.token = this.sanitizeToken(savedToken);
             this.fetchUserProfile();
@@ -276,7 +300,7 @@ class DiscordHypeSquadManager {
                     this.logout();
                 } else {
                     this.token = null;
-                    localStorage.removeItem('discord_token');
+                    await this.deleteTokenData();
                     this.updateSetButtonState();
                 }
                 this.showStatus('❌ Invalid token or session expired.', 'error');
@@ -357,7 +381,7 @@ class DiscordHypeSquadManager {
         this.selectedHouse = null;
         this.legacyBadgeEquipped = undefined;
         this.legacyEligible = false;
-        localStorage.removeItem('discord_token');
+        await this.deleteTokenData();
         this.updateLegacyCardVisibility();
 
         if (window.electronAPI) {
@@ -395,8 +419,8 @@ class DiscordHypeSquadManager {
         }
     }
 
-    loadSavedToken() {
-        const savedToken = localStorage.getItem('discord_token');
+    async loadSavedToken() {
+        const savedToken = await this.loadTokenData();
         if (savedToken) {
             const sanitized = this.sanitizeToken(savedToken);
             const tokenInput = document.getElementById('token');
@@ -422,9 +446,9 @@ class DiscordHypeSquadManager {
         }
     }
 
-    onTokenChange(event) {
+    async onTokenChange(event) {
         this.token = this.sanitizeToken(event.target.value);
-        localStorage.setItem('discord_token', this.token);
+        await this.saveTokenData(this.token);
         this.updateSetButtonState();
 
         // Auto login when pasting a token
