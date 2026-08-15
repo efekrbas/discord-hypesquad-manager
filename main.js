@@ -4,35 +4,66 @@ const fs = require('fs');
 
 let mainWindow;
 let loginWindow;
-
-function createWindow() {
-    mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 720,
-        icon: path.join(__dirname, 'images', 'icon.ico'),
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: false,
-            contextIsolation: true,
-            webSecurity: false
-        },
-        autoHideMenuBar: true
-    });
-
-    mainWindow.loadFile('index.html');
-    // mainWindow.webContents.openDevTools(); // Optional: specifically for debugging
-
-    // Open external links in default browser
-    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith('http')) {
-            require('electron').shell.openExternal(url);
-            return { action: 'deny' };
-        }
-        return { action: 'allow' };
-    });
-}
-
 let resolveLoginPromise = null;
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+app.name = 'discord-badge-manager';
+
+// Silence non-fatal Chromium internal terminal log noise and cache lock warnings
+app.commandLine.appendSwitch('log-level', '3');
+app.commandLine.appendSwitch('disable-logging');
+app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+app.commandLine.appendSwitch('disable-http-cache');
+
+if (!gotTheLock) {
+    app.quit();
+} else {
+    // Clean up any stale or corrupted Chromium QuotaManager files on startup
+    try {
+        const quotaDir = path.join(app.getPath('userData'), 'QuotaManager');
+        if (fs.existsSync(quotaDir)) {
+            fs.rmSync(quotaDir, { recursive: true, force: true });
+        }
+    } catch (e) {}
+
+    app.on('second-instance', () => {
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+        }
+    });
+
+    function createWindow() {
+        mainWindow = new BrowserWindow({
+            width: 1024,
+            height: 720,
+            icon: path.join(__dirname, 'images', 'icon.ico'),
+            show: false,
+            backgroundColor: '#0a0a0f',
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                nodeIntegration: false,
+                contextIsolation: true,
+                webSecurity: false
+            },
+            autoHideMenuBar: true
+        });
+
+        mainWindow.loadFile(path.join(__dirname, 'index.html'));
+        mainWindow.once('ready-to-show', () => {
+            mainWindow.show();
+        });
+
+        // Open external links in default browser
+        mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+            if (url.startsWith('http')) {
+                require('electron').shell.openExternal(url);
+                return { action: 'deny' };
+            }
+            return { action: 'allow' };
+        });
+    }
 
 app.whenReady().then(() => {
     // Intercept Discord API requests globally to bypass CORS / Cloudflare restrictions
@@ -51,8 +82,11 @@ app.whenReady().then(() => {
                     console.log('Token found!');
                     resolveLoginPromise(authHeader);
                     resolveLoginPromise = null;
-                    loginWindow.close();
+                    const win = loginWindow;
                     loginWindow = null;
+                    setImmediate(() => {
+                        if (win && !win.isDestroyed()) win.close();
+                    });
                 }
             }
 
@@ -191,3 +225,5 @@ ipcMain.handle('delete-token', async () => {
         return false;
     }
 });
+}
+

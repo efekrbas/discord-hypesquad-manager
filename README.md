@@ -4,7 +4,7 @@ A modern, secure application (Web & Desktop) that lets you easily manage your Di
 
 ## 📝 Notes & Updates
 
-- **Remove Badge Issue:** The “Remove Badge” feature is currently not working. This is an issue with Discord.
+- **Remove Badge Issue:** The "Remove Badge" feature for HypeSquad is currently not working due to an issue with Discord's servers (500 Error). Switching between houses and managing the Legacy badge works normally.
 
 ## App Screenshots (Web/Desktop) 
 
@@ -50,7 +50,7 @@ You can use this application in two ways: **Web Browser** or **Desktop App**.
 With the Desktop app, you don't need to manually find your token! You can simply click **"Login with Discord"**.
 
 1. Go to the **[Latest Release](https://github.com/efekrbas/discord-badge-manager/releases/latest)** page of this repository.
-2. Download **`Discord.Badge.Manager.Setup.1.0.8.exe`** to install the app on your PC.
+2. Download **`Discord.Badge.Manager.Setup.1.0.9.exe`** to install the app on your PC.
 3. Launch the application and click **Login with Discord**.
 
 ## ⚠️ Disclaimer

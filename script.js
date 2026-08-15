@@ -2,6 +2,7 @@ class DiscordHypeSquadManager {
     constructor() {
         this.selectedHouse = null;
         this.token = null;
+        this.currentUserFlags = 0;
         this.legacyBadgeEquipped = undefined;
         this.legacyEligible = false;
         this.init();
@@ -10,7 +11,6 @@ class DiscordHypeSquadManager {
     init() {
         this.bindEvents();
         this.checkSavedSession();
-        this.loadSavedToken();
         this.playIntroAnimation();
     }
 
@@ -59,11 +59,11 @@ class DiscordHypeSquadManager {
     }
 
     playIntroAnimation() {
-        // Initial page load animation using GSAP
+        // Initial page load animation using GSAP - snappy and instant
         if (typeof gsap !== 'undefined') {
             const tl = gsap.timeline();
-            tl.fromTo('.glass-panel', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", clearProps: "transform" })
-                .fromTo('.gs-reveal', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.15, ease: "power2.out", clearProps: "transform" }, "-=0.4");
+            tl.fromTo('.glass-panel', { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power2.out", clearProps: "transform" })
+                .fromTo('.gs-reveal', { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, stagger: 0.05, ease: "power2.out", clearProps: "transform" }, "-=0.2");
 
             // Add 3D tilt effect on cards based on mouse move
             document.querySelectorAll('.badge-option').forEach(card => {
@@ -203,7 +203,9 @@ class DiscordHypeSquadManager {
         const savedToken = await this.loadTokenData();
         if (savedToken) {
             this.token = this.sanitizeToken(savedToken);
-            this.fetchUserProfile();
+            const tokenInput = document.getElementById('token');
+            if (tokenInput) tokenInput.value = this.token;
+            this.fetchUserProfile(true);
         }
     }
 
@@ -213,82 +215,68 @@ class DiscordHypeSquadManager {
         }
 
         try {
-            // Bypass cache to get the most up-to-date flags
-            const response = await this.makeRequest(`https://discord.com/api/v9/users/@me?_=${Date.now()}`, {
-                headers: {
-                    'Authorization': this.token
-                }
+            // Initiate requests in parallel for maximum speed
+            const mePromise = this.makeRequest(`https://discord.com/api/v9/users/@me?_=${Date.now()}`, {
+                headers: { 'Authorization': this.token }
             });
+            const settingsPromise = this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
+                headers: { 'Authorization': this.token }
+            }).catch(() => ({ ok: false }));
+
+            const response = await mePromise;
 
             if (response.ok) {
                 const user = await response.json();
-                
-                if (this.legacyBadgeEquipped === undefined) {
+
+                // Fetch public profile in parallel with settings decoding
+                const profilePromise = this.makeRequest(`https://discord.com/api/v9/users/${user.id}/profile?_=${Date.now()}`, {
+                    headers: { 'Authorization': this.token }
+                }).catch(() => ({ ok: false }));
+
+                const [settingsResponse, profileRes] = await Promise.all([settingsPromise, profilePromise]);
+
+                if (settingsResponse.ok) {
                     try {
-                        const settingsResponse = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
-                            headers: { 'Authorization': this.token }
-                        });
-                        if (settingsResponse.ok) {
-                            const settingsData = await settingsResponse.json();
-                            if (settingsData.settings) {
-                                const binaryString = atob(settingsData.settings);
-                                let hexString = '';
-                                for (let i = 0; i < binaryString.length; i++) {
-                                    hexString += binaryString.charCodeAt(i).toString(16).padStart(2, '0');
-                                }
-                                // b201020801 means legacy badge is explicitly hidden
-                                this.legacyBadgeEquipped = !hexString.includes('b201020801');
-                            } else {
-                                this.legacyBadgeEquipped = true;
+                        const settingsData = await settingsResponse.json();
+                        if (settingsData && settingsData.settings) {
+                            const binaryString = atob(settingsData.settings);
+                            let hexString = '';
+                            for (let i = 0; i < binaryString.length; i++) {
+                                hexString += binaryString.charCodeAt(i).toString(16).padStart(2, '0');
                             }
+                            // b201020801 means legacy badge is explicitly hidden
+                            this.legacyBadgeEquipped = !hexString.includes('b201020801');
+                        } else {
+                            this.legacyBadgeEquipped = true;
                         }
                     } catch (e) {
-                        console.error('Error fetching settings:', e);
                         this.legacyBadgeEquipped = false;
                     }
                 }
 
-                // Extract HypeSquad house from flags
-                let mergedFlags = (user.flags || 0) | (user.public_flags || 0);
-                
-                // Always fetch profile to check for legacy badge eligibility and HypeSquad fallback
-                try {
-                    const profileRes = await this.makeRequest(`https://discord.com/api/v9/users/${user.id}/profile?_=${Date.now()}`, {
-                        headers: { 'Authorization': this.token }
-                    });
-                    if (profileRes.ok) {
+                if (profileRes.ok) {
+                    try {
                         const profileData = await profileRes.json();
                         const badges = profileData.badges || [];
-                        
-                        // Check legacy badge eligibility from actual profile badges
-                        this.legacyEligible = badges.some(b => (b.id || '').includes('legacy_username'));
-                        
-                        // If user is not eligible, force legacyBadgeEquipped to false
-                        if (!this.legacyEligible) {
-                            this.legacyBadgeEquipped = false;
+                        const hasLegacyBadge = badges.some(b => (b.id || '').includes('legacy_username'));
+                        const hasLegacyUsername = Boolean(profileData.legacy_username || (profileData.user && profileData.user.legacy_username));
+
+                        if (hasLegacyBadge || hasLegacyUsername) {
+                            this.legacyEligible = true;
                         }
-                        
-                        this.updateLegacyCardVisibility();
-                        
-                        // HypeSquad fallback from profile badges
-                        if (!(mergedFlags & 64) && !(mergedFlags & 128) && !(mergedFlags & 256)) {
-                            for (const badge of badges) {
-                                const idStr = badge.id || '';
-                                const iconStr = badge.icon || '';
-                                if (idStr.includes('house_1') || iconStr === '8a88d63823d8a71cd5e390baa45efa02') mergedFlags |= 64; // Bravery
-                                else if (idStr.includes('house_2') || iconStr === '011940fd013da3f7fb926e4a1cd2e618') mergedFlags |= 128; // Brilliance
-                                else if (idStr.includes('house_3') || iconStr === '3aa41de486fa12454c3761e8e223442e') mergedFlags |= 256; // Balance
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error('Profile fetch failed:', e);
-                    this.legacyEligible = false;
-                    this.legacyBadgeEquipped = false;
-                    this.updateLegacyCardVisibility();
+                    } catch (e) {}
                 }
+
+                if (!this.legacyEligible) {
+                    this.legacyBadgeEquipped = false;
+                }
+
+                // Extract HypeSquad house directly from user flags (authoritative real-time data)
+                const mergedFlags = (user.flags || 0) | (user.public_flags || 0);
+                this.currentUserFlags = mergedFlags;
                 user.merged_flags = mergedFlags;
 
+                this.updateLegacyCardVisibility();
                 this.updateProfileUI(user);
                 this.updateSetButtonState();
             } else {
@@ -379,6 +367,7 @@ class DiscordHypeSquadManager {
     async logout() {
         this.token = null;
         this.selectedHouse = null;
+        this.currentUserFlags = 0;
         this.legacyBadgeEquipped = undefined;
         this.legacyEligible = false;
         await this.deleteTokenData();
@@ -463,8 +452,11 @@ class DiscordHypeSquadManager {
     selectBadge(event) {
         const selectedOption = event.currentTarget;
         
-        // Prevent re-triggering animations if already selected
+        // If clicking the currently selected badge, deselect it
         if (selectedOption.classList.contains('selected')) {
+            selectedOption.classList.remove('selected');
+            this.selectedHouse = null;
+            this.updateSetButtonState();
             return;
         }
 
@@ -511,7 +503,13 @@ class DiscordHypeSquadManager {
 
     updateSetButtonState() {
         const setBadgeBtn = document.getElementById('setBadge');
-        setBadgeBtn.disabled = !(this.token && this.selectedHouse);
+        if (setBadgeBtn) {
+            setBadgeBtn.disabled = !(this.token && this.selectedHouse);
+        }
+        const removeBadgeBtn = document.getElementById('removeBadge');
+        if (removeBadgeBtn) {
+            removeBadgeBtn.disabled = !this.token;
+        }
     }
 
     async setBadge() {
@@ -535,7 +533,7 @@ class DiscordHypeSquadManager {
                 if (response.ok || response.status === 204) {
                     this.showStatus('✅ Legacy badge equipped successfully!', 'success');
                     this.legacyBadgeEquipped = true;
-                    this.fetchUserProfile(true);
+                    await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -561,10 +559,10 @@ class DiscordHypeSquadManager {
                     })
                 });
 
-                if (response.ok) {
+                if (response.ok || response.status === 204) {
                     const houseName = this.getHouseName(this.selectedHouse);
                     this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
-                    this.fetchUserProfile(true);
+                    await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -593,15 +591,9 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
-            let legacySuccess = false;
-            let hypeSuccess = false;
-            let attemptedLegacy = false;
-            let attemptedHype = false;
-
-            // If legacy is selected, or if nothing is selected, try removing legacy
-            if (this.selectedHouse === 'legacy' || this.selectedHouse === null) {
-                attemptedLegacy = true;
-                const base64 = 'QgWyAQIIAQ=='; // Pre-computed protobuf payload for hiding badge
+            // Case 1: Legacy badge explicitly selected
+            if (this.selectedHouse === 'legacy') {
+                const base64 = 'QgWyAQIIAQ=='; // Protobuf payload for hiding legacy badge
                 const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
                     method: 'PATCH',
                     headers: { 'Authorization': this.token, 'Content-Type': 'application/json' },
@@ -609,42 +601,117 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    legacySuccess = true;
                     this.legacyBadgeEquipped = false;
+                    this.showStatus('✅ Legacy badge hidden successfully!', 'success');
+                    document.querySelectorAll('.badge-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    this.selectedHouse = null;
+                    this.updateSetButtonState();
+                    await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
-                    this.showLoading(false);
-                    return;
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
+                return;
             }
 
-            // If a hypesquad house is selected, or if nothing is selected, try removing hypesquad
-            if (this.selectedHouse !== 'legacy' || this.selectedHouse === null) {
-                attemptedHype = true;
+            // Case 2: HypeSquad house explicitly selected (1, 2, or 3)
+            if (this.selectedHouse !== null) {
                 const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
                     method: 'DELETE',
                     headers: { 'Authorization': this.token }
                 });
 
                 if (response.ok || response.status === 204) {
-                    hypeSuccess = true;
+                    this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
+                    document.querySelectorAll('.badge-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    this.selectedHouse = null;
+                    this.updateSetButtonState();
+                    await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
                     this.showStatus('❌ Invalid token! Please check your token.', 'error');
-                    this.showLoading(false);
-                    return;
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else if (response.status === 500) {
+                    this.showStatus('⚠️ Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error removing HypeSquad badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
+                return;
             }
 
-            if ((attemptedLegacy && legacySuccess) || (attemptedHype && hypeSuccess)) {
-                this.showStatus('✅ Badge(s) removed successfully!', 'success');
+            // Case 3: No badge card selected - determine by current user profile
+            const hasHypeBadge = (this.currentUserFlags & (64 | 128 | 256)) !== 0;
+            const hasLegacyBadge = this.legacyBadgeEquipped === true;
+
+            // If user only has legacy badge and no hypesquad badge, hide legacy badge
+            if (!hasHypeBadge && hasLegacyBadge) {
+                const base64 = 'QgWyAQIIAQ==';
+                const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
+                    method: 'PATCH',
+                    headers: { 'Authorization': this.token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings: base64 })
+                });
+
+                if (response.ok || response.status === 204) {
+                    this.legacyBadgeEquipped = false;
+                    this.showStatus('✅ Legacy badge hidden successfully!', 'success');
+                    document.querySelectorAll('.badge-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    this.selectedHouse = null;
+                    this.updateSetButtonState();
+                    await this.fetchUserProfile(true);
+                } else if (response.status === 401) {
+                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                } else if (response.status === 429) {
+                    const data = await response.json().catch(() => ({}));
+                    const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    this.showStatus(`❌ Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                }
+                return;
+            }
+
+            // Otherwise, remove HypeSquad badge
+            const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
+                method: 'DELETE',
+                headers: { 'Authorization': this.token }
+            });
+
+            if (response.ok || response.status === 204) {
+                this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
                 document.querySelectorAll('.badge-option').forEach(option => {
                     option.classList.remove('selected');
                 });
                 this.selectedHouse = null;
                 this.updateSetButtonState();
-                this.fetchUserProfile(true);
+                await this.fetchUserProfile(true);
+            } else if (response.status === 401) {
+                this.showStatus('❌ Invalid token! Please check your token.', 'error');
+            } else if (response.status === 429) {
+                const data = await response.json().catch(() => ({}));
+                const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
+                this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+            } else if (response.status === 500) {
+                this.showStatus('⚠️ Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
             } else {
-                this.showStatus('❌ Failed to remove badge. Please try again.', 'error');
+                const errorData = await response.json().catch(() => ({}));
+                this.showStatus(`❌ Error removing badge: ${errorData.message || 'Unknown error'}`, 'error');
             }
 
         } catch (error) {

@@ -60,8 +60,15 @@
       ]
     }
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8127612196878796"
-     crossorigin="anonymous"></script>
+    <script>
+      if (!navigator.userAgent.includes('Electron')) {
+        const adScript = document.createElement('script');
+        adScript.async = true;
+        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8127612196878796";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+      }
+    </script>
 </head>
 
 <body>
