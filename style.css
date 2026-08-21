@@ -78,11 +78,6 @@ body::after {
     mask-repeat: no-repeat;
 }
 
-/* Hide the background GIF completely in the Electron desktop app for a clean UI */
-body.electron-app::after {
-    display: none !important;
-}
-
 /* Background Orbs */
 .bg-container {
     position: fixed;
@@ -324,6 +319,9 @@ body.electron-app::after {
     border-radius: 50%;
     display: block;
     border: 3px solid var(--bg-dark);
+    object-fit: cover;
+    background-color: var(--bg-dark);
+    box-sizing: content-box;
 }
 
 .profile-info {
