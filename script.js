@@ -523,6 +523,11 @@ class DiscordHypeSquadManager {
 
         try {
             if (this.selectedHouse === 'legacy') {
+                if (this.legacyBadgeEquipped) {
+                    this.showLoading(false);
+                    this.showStatus('You already have the Legacy badge equipped.', 'info');
+                    return;
+                }
                 const base64 = 'QgWyAQIIAA=='; // Pre-computed protobuf payload for showing badge
 
                 const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
@@ -543,7 +548,20 @@ class DiscordHypeSquadManager {
                     const errorData = await response.json().catch(() => ({}));
                     this.showStatus(`Error equipping legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
+                return;
             } else {
+                let hasSpecificBadge = false;
+                if (this.selectedHouse == 1 && (this.currentUserFlags & 64) !== 0) hasSpecificBadge = true;
+                if (this.selectedHouse == 2 && (this.currentUserFlags & 128) !== 0) hasSpecificBadge = true;
+                if (this.selectedHouse == 3 && (this.currentUserFlags & 256) !== 0) hasSpecificBadge = true;
+
+                if (hasSpecificBadge) {
+                    this.showLoading(false);
+                    const houseNames = { 1: 'Bravery (Purple)', 2: 'Brilliance (Red)', 3: 'Balance (Green)' };
+                    this.showStatus(`You already have the ${houseNames[this.selectedHouse]} badge equipped.`, 'info');
+                    return;
+                }
+
                 const houseIdMap = { 1: 3, 2: 1, 3: 2 };
                 const apiHouseId = houseIdMap[this.selectedHouse] || this.selectedHouse;
 
@@ -591,8 +609,22 @@ class DiscordHypeSquadManager {
         this.showLoading(true);
 
         try {
+            const hasHypeBadge = (this.currentUserFlags & (64 | 128 | 256)) !== 0;
+            const hasLegacyBadge = this.legacyBadgeEquipped === true;
+
+            if (!hasHypeBadge && !hasLegacyBadge) {
+                this.showLoading(false);
+                this.showStatus('You do not have any badge to remove.', 'info');
+                return;
+            }
+
             // Case 1: Legacy badge explicitly selected
             if (this.selectedHouse === 'legacy') {
+                if (!hasLegacyBadge) {
+                    this.showLoading(false);
+                    this.showStatus('You do not have the Legacy badge equipped.', 'info');
+                    return;
+                }
                 const base64 = 'QgWyAQIIAQ=='; // Protobuf payload for hiding legacy badge
                 const response = await this.makeRequest('https://discord.com/api/v9/users/@me/settings-proto/1', {
                     method: 'PATCH',
@@ -618,6 +650,11 @@ class DiscordHypeSquadManager {
 
             // Case 2: HypeSquad house explicitly selected (1, 2, or 3)
             if (this.selectedHouse !== null) {
+                if (!hasHypeBadge) {
+                    this.showLoading(false);
+                    this.showStatus('You do not have a HypeSquad badge to remove.', 'info');
+                    return;
+                }
                 const response = await this.makeRequest('https://discord.com/api/v9/hypesquad/online', {
                     method: 'DELETE',
                     headers: { 'Authorization': this.token }
@@ -641,9 +678,6 @@ class DiscordHypeSquadManager {
             }
 
             // Case 3: No badge card selected - determine by current user profile
-            const hasHypeBadge = (this.currentUserFlags & (64 | 128 | 256)) !== 0;
-            const hasLegacyBadge = this.legacyBadgeEquipped === true;
-
             // If user only has legacy badge and no hypesquad badge, hide legacy badge
             if (!hasHypeBadge && hasLegacyBadge) {
                 const base64 = 'QgWyAQIIAQ==';
