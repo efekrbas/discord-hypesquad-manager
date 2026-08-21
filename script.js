@@ -189,11 +189,11 @@ class DiscordHypeSquadManager {
                 this.updateSetButtonState();
                 await this.fetchUserProfile();
             } else {
-                this.showStatus('❌ Login cancelled or failed.', 'error');
+                this.showStatus('Login cancelled or failed.', 'error');
             }
         } catch (error) {
             console.error('Electron login error:', error);
-            this.showStatus('❌ An error occurred during login.', 'error');
+            this.showStatus('An error occurred during login.', 'error');
         } finally {
             this.showLoading(false);
         }
@@ -211,7 +211,7 @@ class DiscordHypeSquadManager {
 
     async fetchUserProfile(silent = false) {
         if (!silent) {
-            this.showStatus('⏳ Fetching profile...', 'info');
+            this.showStatus('Loading profile...', 'info');
         }
 
         try {
@@ -279,6 +279,7 @@ class DiscordHypeSquadManager {
                 this.updateLegacyCardVisibility();
                 this.updateProfileUI(user);
                 this.updateSetButtonState();
+                this.hideStatus();
             } else {
                 // Only clear token if we already had a valid session previously, otherwise just show error
                 const tokenInput = document.getElementById('token');
@@ -291,11 +292,11 @@ class DiscordHypeSquadManager {
                     await this.deleteTokenData();
                     this.updateSetButtonState();
                 }
-                this.showStatus('❌ Invalid token or session expired.', 'error');
+                this.showStatus('Invalid token or session expired.', 'error');
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
-            this.showStatus('❌ Could not fetch profile.', 'error');
+            this.showStatus('Could not fetch profile.', 'error');
         }
     }
 
@@ -531,18 +532,18 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('✅ Legacy badge equipped successfully!', 'success');
+                    this.showStatus('Legacy badge equipped successfully!', 'success');
                     this.legacyBadgeEquipped = true;
                     await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
-                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                    this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
                     const data = await response.json().catch(() => ({}));
                     const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                    this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
                 } else {
                     const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error equipping legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showStatus(`Error equipping legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
             } else {
                 const houseIdMap = { 1: 3, 2: 1, 3: 2 };
@@ -561,22 +562,22 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     const houseName = this.getHouseName(this.selectedHouse);
-                    this.showStatus(`✅ ${houseName} badge added successfully!`, 'success');
+                    this.showStatus(`${houseName} badge added successfully!`, 'success');
                     await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
-                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                    this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
                     const data = await response.json().catch(() => ({}));
                     const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                    this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
                 } else {
                     const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showStatus(`Error: ${errorData.message || 'Unknown error'}`, 'error');
                 }
             }
         } catch (error) {
             console.error('API Error:', error);
-            this.showStatus(`❌ Error: ${error.message}`, 'error');
+            this.showStatus(`Error: ${error.message}`, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -602,7 +603,7 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     this.legacyBadgeEquipped = false;
-                    this.showStatus('✅ Legacy badge hidden successfully!', 'success');
+                    this.showStatus('Legacy badge hidden successfully!', 'success');
                     document.querySelectorAll('.badge-option').forEach(option => {
                         option.classList.remove('selected');
                     });
@@ -610,14 +611,14 @@ class DiscordHypeSquadManager {
                     this.updateSetButtonState();
                     await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
-                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                    this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
                     const data = await response.json().catch(() => ({}));
                     const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                    this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
                 } else {
                     const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showStatus(`Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
                 return;
             }
@@ -630,7 +631,7 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
+                    this.showStatus('HypeSquad badge removed successfully!', 'success');
                     document.querySelectorAll('.badge-option').forEach(option => {
                         option.classList.remove('selected');
                     });
@@ -638,16 +639,16 @@ class DiscordHypeSquadManager {
                     this.updateSetButtonState();
                     await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
-                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                    this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
                     const data = await response.json().catch(() => ({}));
                     const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                    this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
                 } else if (response.status === 500) {
-                    this.showStatus('⚠️ Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
+                    this.showStatus('Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
                 } else {
                     const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error removing HypeSquad badge: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showStatus(`Error removing HypeSquad badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
                 return;
             }
@@ -667,7 +668,7 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     this.legacyBadgeEquipped = false;
-                    this.showStatus('✅ Legacy badge hidden successfully!', 'success');
+                    this.showStatus('Legacy badge hidden successfully!', 'success');
                     document.querySelectorAll('.badge-option').forEach(option => {
                         option.classList.remove('selected');
                     });
@@ -675,14 +676,14 @@ class DiscordHypeSquadManager {
                     this.updateSetButtonState();
                     await this.fetchUserProfile(true);
                 } else if (response.status === 401) {
-                    this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                    this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
                     const data = await response.json().catch(() => ({}));
                     const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                    this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                    this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
                 } else {
                     const errorData = await response.json().catch(() => ({}));
-                    this.showStatus(`❌ Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
+                    this.showStatus(`Error hiding legacy badge: ${errorData.message || 'Unknown error'}`, 'error');
                 }
                 return;
             }
@@ -694,7 +695,7 @@ class DiscordHypeSquadManager {
             });
 
             if (response.ok || response.status === 204) {
-                this.showStatus('✅ HypeSquad badge removed successfully!', 'success');
+                this.showStatus('HypeSquad badge removed successfully!', 'success');
                 document.querySelectorAll('.badge-option').forEach(option => {
                     option.classList.remove('selected');
                 });
@@ -702,21 +703,21 @@ class DiscordHypeSquadManager {
                 this.updateSetButtonState();
                 await this.fetchUserProfile(true);
             } else if (response.status === 401) {
-                this.showStatus('❌ Invalid token! Please check your token.', 'error');
+                this.showStatus('Invalid token! Please check your token.', 'error');
             } else if (response.status === 429) {
                 const data = await response.json().catch(() => ({}));
                 const retryAfter = data.retry_after ? Math.ceil(data.retry_after) : 'few';
-                this.showStatus(`⏳ Rate limited! Please wait ${retryAfter} seconds.`, 'error');
+                this.showStatus(`Rate limited! Please wait ${retryAfter} seconds.`, 'error');
             } else if (response.status === 500) {
-                this.showStatus('⚠️ Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
+                this.showStatus('Discord no longer allows removing HypeSquad badges (Discord 500 Server Error). You can switch between houses instead.', 'error');
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                this.showStatus(`❌ Error removing badge: ${errorData.message || 'Unknown error'}`, 'error');
+                this.showStatus(`Error removing badge: ${errorData.message || 'Unknown error'}`, 'error');
             }
 
         } catch (error) {
             console.error('API Error:', error);
-            this.showStatus(`❌ Error: ${error.message}`, 'error');
+            this.showStatus(`Error: ${error.message}`, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -749,6 +750,21 @@ class DiscordHypeSquadManager {
                 }
             }, 300); // Wait for fade out
         }, 5000);
+    }
+
+    hideStatus() {
+        const statusElement = document.getElementById('status');
+        if (!statusElement) return;
+
+        if (this.statusTimeout) clearTimeout(this.statusTimeout);
+        
+        statusElement.classList.remove('show');
+        setTimeout(() => {
+            if (!statusElement.classList.contains('show')) {
+                statusElement.textContent = '';
+                statusElement.className = 'status-message';
+            }
+        }, 300);
     }
 
     showLoading(show) {
