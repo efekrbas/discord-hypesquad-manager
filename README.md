@@ -2,10 +2,6 @@
 
 A modern, secure application (Web & Desktop) that lets you easily manage your Discord HypeSquad and Legacy badges without complex manual requests.
 
-## 📝 Notes & Updates
-
-- **Remove Badge Issue:** The "Remove Badge" feature for HypeSquad is currently not working due to an issue with Discord's servers (500 Error). Switching between houses and managing the Legacy badge works normally.
-
 ## App Screenshots (Web/Desktop) 
 
 
