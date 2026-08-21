@@ -61,19 +61,19 @@ body::after {
     right: 0;
     bottom: 0;
     background-image: url('images/bg.gif');
-    background-size: auto 60vh;
+    background-size: auto min(50vh, 450px);
     background-position: right bottom;
     background-repeat: no-repeat;
     z-index: -2;
     /* Softly fade out the top and left edges of the GIF to blend seamlessly into the background color */
     /* A diagonal gradient guarantees the top-left edges fade out without touching the character in the bottom-right */
     -webkit-mask-image: linear-gradient(135deg, transparent 5%, black 40%);
-    -webkit-mask-size: auto 60vh;
+    -webkit-mask-size: auto min(50vh, 450px);
     -webkit-mask-position: right bottom;
     -webkit-mask-repeat: no-repeat;
 
     mask-image: linear-gradient(135deg, transparent 5%, black 40%);
-    mask-size: auto 60vh;
+    mask-size: auto min(50vh, 450px);
     mask-position: right bottom;
     mask-repeat: no-repeat;
 }
