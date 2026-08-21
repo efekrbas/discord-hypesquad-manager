@@ -264,7 +264,7 @@ class DiscordHypeSquadManager {
                         if (hasLegacyBadge || hasLegacyUsername) {
                             this.legacyEligible = true;
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 }
 
                 if (!this.legacyEligible) {
@@ -284,7 +284,7 @@ class DiscordHypeSquadManager {
                 // Only clear token if we already had a valid session previously, otherwise just show error
                 const tokenInput = document.getElementById('token');
                 const isTyping = tokenInput && tokenInput.value.length > 0 && document.activeElement === tokenInput;
-                
+
                 if (!isTyping) {
                     this.logout();
                 } else {
@@ -452,7 +452,7 @@ class DiscordHypeSquadManager {
 
     selectBadge(event) {
         const selectedOption = event.currentTarget;
-        
+
         // If clicking the currently selected badge, deselect it
         if (selectedOption.classList.contains('selected')) {
             selectedOption.classList.remove('selected');
@@ -766,7 +766,7 @@ class DiscordHypeSquadManager {
         if (!statusElement) return;
 
         if (this.statusTimeout) clearTimeout(this.statusTimeout);
-        
+
         statusElement.classList.remove('show');
         setTimeout(() => {
             if (!statusElement.classList.contains('show')) {
