@@ -532,9 +532,7 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('Legacy badge equipped successfully!', 'success');
-                    this.legacyBadgeEquipped = true;
-                    await this.fetchUserProfile(true);
+                    this.legacyBadgeEquipped = true; await this.fetchUserProfile(true); this.showLoading(false); this.showStatus('Legacy badge equipped successfully!', 'success');
                 } else if (response.status === 401) {
                     this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -562,8 +560,9 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     const houseName = this.getHouseName(this.selectedHouse);
-                    this.showStatus(`${houseName} badge added successfully!`, 'success');
                     await this.fetchUserProfile(true);
+                    this.showLoading(false);
+                    this.showStatus(`${houseName} badge added successfully!`, 'success');
                 } else if (response.status === 401) {
                     this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -603,13 +602,7 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     this.legacyBadgeEquipped = false;
-                    this.showStatus('Legacy badge hidden successfully!', 'success');
-                    document.querySelectorAll('.badge-option').forEach(option => {
-                        option.classList.remove('selected');
-                    });
-                    this.selectedHouse = null;
-                    this.updateSetButtonState();
-                    await this.fetchUserProfile(true);
+                    document.querySelectorAll('.badge-option').forEach(option => { option.classList.remove('selected'); }); this.selectedHouse = null; this.updateSetButtonState(); await this.fetchUserProfile(true); this.showLoading(false); this.showStatus('Legacy badge hidden successfully!', 'success');
                 } else if (response.status === 401) {
                     this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -631,13 +624,7 @@ class DiscordHypeSquadManager {
                 });
 
                 if (response.ok || response.status === 204) {
-                    this.showStatus('HypeSquad badge removed successfully!', 'success');
-                    document.querySelectorAll('.badge-option').forEach(option => {
-                        option.classList.remove('selected');
-                    });
-                    this.selectedHouse = null;
-                    this.updateSetButtonState();
-                    await this.fetchUserProfile(true);
+                    document.querySelectorAll('.badge-option').forEach(option => { option.classList.remove('selected'); }); this.selectedHouse = null; this.updateSetButtonState(); await this.fetchUserProfile(true); this.showLoading(false); this.showStatus('HypeSquad badge removed successfully!', 'success');
                 } else if (response.status === 401) {
                     this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -668,13 +655,7 @@ class DiscordHypeSquadManager {
 
                 if (response.ok || response.status === 204) {
                     this.legacyBadgeEquipped = false;
-                    this.showStatus('Legacy badge hidden successfully!', 'success');
-                    document.querySelectorAll('.badge-option').forEach(option => {
-                        option.classList.remove('selected');
-                    });
-                    this.selectedHouse = null;
-                    this.updateSetButtonState();
-                    await this.fetchUserProfile(true);
+                    document.querySelectorAll('.badge-option').forEach(option => { option.classList.remove('selected'); }); this.selectedHouse = null; this.updateSetButtonState(); await this.fetchUserProfile(true); this.showLoading(false); this.showStatus('Legacy badge hidden successfully!', 'success');
                 } else if (response.status === 401) {
                     this.showStatus('Invalid token! Please check your token.', 'error');
                 } else if (response.status === 429) {
@@ -695,13 +676,7 @@ class DiscordHypeSquadManager {
             });
 
             if (response.ok || response.status === 204) {
-                this.showStatus('HypeSquad badge removed successfully!', 'success');
-                document.querySelectorAll('.badge-option').forEach(option => {
-                    option.classList.remove('selected');
-                });
-                this.selectedHouse = null;
-                this.updateSetButtonState();
-                await this.fetchUserProfile(true);
+                document.querySelectorAll('.badge-option').forEach(option => { option.classList.remove('selected'); }); this.selectedHouse = null; this.updateSetButtonState(); await this.fetchUserProfile(true); this.showLoading(false); this.showStatus('HypeSquad badge removed successfully!', 'success');
             } else if (response.status === 401) {
                 this.showStatus('Invalid token! Please check your token.', 'error');
             } else if (response.status === 429) {
@@ -772,6 +747,13 @@ class DiscordHypeSquadManager {
         const buttons = document.querySelectorAll('.action-btn');
 
         if (show) {
+            const statusElement = document.getElementById('status');
+            if (statusElement) {
+                statusElement.classList.remove('show');
+                statusElement.textContent = '';
+                statusElement.className = 'status-message';
+            }
+            if (this.statusTimeout) clearTimeout(this.statusTimeout);
             loadingElement.classList.remove('hidden');
             buttons.forEach(btn => btn.disabled = true);
         } else {

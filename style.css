@@ -617,6 +617,13 @@ body.electron-app::after {
 /* Status & Loading */
 .status-section {
     min-height: 48px;
+    display: grid;
+}
+
+.status-message, .loading {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
 }
 
 .status-message {
@@ -663,12 +670,12 @@ body.electron-app::after {
     justify-content: center;
     gap: 12px;
     padding: 14px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(88, 101, 242, 0.1);
     border-radius: 12px;
     font-size: 13px;
     font-weight: 500;
-    color: var(--text-muted);
-    border: 1px solid var(--glass-border);
+    color: var(--brand-primary);
+    border: 1px solid rgba(88, 101, 242, 0.2);
 }
 
 .loading.hidden {
