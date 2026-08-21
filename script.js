@@ -551,13 +551,13 @@ class DiscordHypeSquadManager {
                 return;
             } else {
                 let hasSpecificBadge = false;
-                if (this.selectedHouse == 1 && (this.currentUserFlags & 64) !== 0) hasSpecificBadge = true;
-                if (this.selectedHouse == 2 && (this.currentUserFlags & 128) !== 0) hasSpecificBadge = true;
-                if (this.selectedHouse == 3 && (this.currentUserFlags & 256) !== 0) hasSpecificBadge = true;
+                if (this.selectedHouse == 1 && (this.currentUserFlags & 256) !== 0) hasSpecificBadge = true;
+                if (this.selectedHouse == 2 && (this.currentUserFlags & 64) !== 0) hasSpecificBadge = true;
+                if (this.selectedHouse == 3 && (this.currentUserFlags & 128) !== 0) hasSpecificBadge = true;
 
                 if (hasSpecificBadge) {
                     this.showLoading(false);
-                    const houseNames = { 1: 'Bravery (Purple)', 2: 'Brilliance (Red)', 3: 'Balance (Green)' };
+                    const houseNames = { 1: 'Balance (Green)', 2: 'Bravery (Purple)', 3: 'Brilliance (Red)' };
                     this.showStatus(`You already have the ${houseNames[this.selectedHouse]} badge equipped.`, 'info');
                     return;
                 }
