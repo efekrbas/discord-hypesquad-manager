@@ -15,26 +15,26 @@ class DiscordHypeSquadManager {
     }
 
     async saveTokenData(token) {
-        if (window.electronAPI) {
+        if (window.electronAPI && window.electronAPI.saveToken) {
             await window.electronAPI.saveToken(token);
         } else {
-            localStorage.setItem('discord_token', token);
+            sessionStorage.setItem('discord_token', token);
         }
     }
 
     async loadTokenData() {
-        if (window.electronAPI) {
+        if (window.electronAPI && window.electronAPI.getToken) {
             return await window.electronAPI.getToken();
         } else {
-            return localStorage.getItem('discord_token');
+            return sessionStorage.getItem('discord_token');
         }
     }
 
     async deleteTokenData() {
-        if (window.electronAPI) {
+        if (window.electronAPI && window.electronAPI.deleteToken) {
             await window.electronAPI.deleteToken();
         } else {
-            localStorage.removeItem('discord_token');
+            sessionStorage.removeItem('discord_token');
         }
     }
 
@@ -47,14 +47,7 @@ class DiscordHypeSquadManager {
                 json: async () => response.data
             };
         } else {
-            try {
-                return await fetch(url, options);
-            } catch (error) {
-                if (error instanceof TypeError) {
-                    throw new Error("Browser blocked this request (CORS).");
-                }
-                throw error;
-            }
+            return await fetch(url, options);
         }
     }
 
@@ -211,7 +204,7 @@ class DiscordHypeSquadManager {
 
     async fetchUserProfile(silent = false) {
         if (!silent) {
-            this.showStatus('Loading profile...', 'info');
+            this.showStatus('Connecting to Discord account...', 'info');
         }
 
         try {
@@ -296,7 +289,7 @@ class DiscordHypeSquadManager {
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
-            this.showStatus('Could not fetch profile.', 'error');
+            this.showStatus('Unable to retrieve profile. Please check your token.', 'error');
         }
     }
 
@@ -346,11 +339,11 @@ class DiscordHypeSquadManager {
             const legacyBadgeImg = document.createElement('img');
             legacyBadgeImg.src = `images/legacy.svg`;
             legacyBadgeImg.className = 'current-badge-icon legacy';
-            legacyBadgeImg.title = 'Legacy Username Badge';
             legacyBadgeImg.style.width = '28px';
             legacyBadgeImg.style.height = '28px';
             legacyBadgeImg.style.marginLeft = '-10px'; // Counteract flex gap and SVG padding
             legacyBadgeImg.style.marginTop = '-1px'; // Fine-tune vertical alignment
+            legacyBadgeImg.title = 'Legacy Username Badge';
             usernameEl.appendChild(legacyBadgeImg);
         }
 
@@ -823,7 +816,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const statusElement = document.getElementById('status');
         if (!statusElement.textContent) {
-            statusElement.textContent = 'Enter your Discord token to begin.';
+            const isElectron = !!window.electronAPI || navigator.userAgent.includes('Electron');
+            statusElement.textContent = isElectron
+                ? 'Click "Login with Discord" to get started.'
+                : 'Paste your Discord token to get started.';
             statusElement.className = 'status-message info show';
 
             setTimeout(() => {
